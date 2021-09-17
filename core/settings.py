@@ -6,6 +6,7 @@ Copyright (c) 2019 - present AppSeed.us
 import os
 from decouple import config
 from unipath import Path
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).parent
@@ -20,7 +21,7 @@ DEBUG = True
 # DEVEL = True
 
 # load production server from .env
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', config('SERVER', default='127.0.0.1')]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', config('SERVER', default='127.0.0.1'), 'korshuk.pythonanywhere.com', 'tenderhack.herokuapp.com']
 
 # Application definition
 
@@ -124,3 +125,6 @@ STATICFILES_DIRS = (
 )
 #############################################################
 #############################################################
+
+
+django_heroku.settings(locals())
