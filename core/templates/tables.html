@@ -1,0 +1,147 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} UI Tables {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="container-fluid py-4">
+    <div class="row my-4">
+        <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
+          <div class="card">
+            <div class="card-header pb-0">
+              <div class="row">
+                <div class="col-lg-6 col-7">
+                  <h6>Закупки</h6>
+                  <p class="text-sm mb-0">
+                    <i class="fa fa-check text-info" aria-hidden="true"></i>
+                    <span class="font-weight-bold ms-1">{{purchases_last_month}}</span> за этот месяц
+                  </p>
+                </div>
+                <div class="col-lg-6 col-5 my-auto text-end">
+                  <div class="dropdown float-lg-end pe-4">
+                    <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="fa fa-ellipsis-v text-secondary"></i>
+                    </a>
+                    <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+              <div class="table-responsive">
+                  <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-height fixed-columns">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Название</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Предложений</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Бюджет</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Текущая цена</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Статус</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in purchases_display %}
+                        <tr>
+                          <td>
+                              <a href="https://zakupki.mos.ru/auction/{{item.auctionId}}">
+                                <div class="d-flex px-2 py-1" >
+    <!--                              <div>-->
+    <!--                                <img src="/static/assets/img/small-logos/logo-xd.svg" class="avatar avatar-sm me-3">-->
+    <!--                              </div>-->
+                                  <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm" style="width: 300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ item.name }}</h6>
+                                  </div>
+                                </div>
+                              </a>
+                          </td>
+                          <td class="align-middle text-center">
+                            {% if item.offerCount %}
+                              <span class="text-xs font-weight-bold"> {{ item.offerCount }} </span>
+                            {% else %}
+                              <span class="text-xs font-weight-bold"> - </span>
+                            {% endif %}
+                          </td>
+                          <td class="align-middle text-center text-sm">
+                            <span class="text-xs font-weight-bold"> {{ item.startPrice }}  ₽</span>
+                          </td>
+                          <td class="align-middle text-center text-sm">
+                            {% if item.auctionCurrentPrice %}
+                              <span class="text-xs font-weight-bold"> {{ item.auctionCurrentPrice }}  ₽</span>
+                            {% else %}
+                              <span class="text-xs font-weight-bold"> - </span>
+                            {% endif %}
+                          </td>
+                          <td class="align-middle text-center">
+                            {% if item.stateName == 'Активная' %}
+                              <h6><span class="badge bg-gradient-secondary text-xxs">Активная</span></h6>
+                            {% elif item.stateName == 'Не состоялась'%}
+                              <h6><span class="badge bg-gradient-danger text-xxs">Не состоялась</span></h6>
+                            {% else %}
+                              <h6><span class="badge bg-gradient-success text-xxs">Проведена</span></h6>
+                            {% endif %}
+                          </td>
+                          </td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+
+                  {% if purchases_display.has_other_pages %}
+                <div class="dataTable-bottom">
+                    <div class="dataTable-info">Всего {{total_purchases}} элементов</div>
+                    <nav class="dataTable-pagination">
+                      <ul class="dataTable-pagination-list">
+                          {% if purchases_display.has_previous %}
+                            <li class="pager"><a href="?page={{ purchases_display.previous_page_number }}" data-page="{{ purchases_display.previous_page_number }}">‹</a></li>
+                          {% endif %}
+                          {% for i in purchases_display.paginator.page_range %}
+                              {% if i <= purchases_display.number|add:5 and i >= purchases_display.number|add:-5 %}
+                                {% if purchases_display.number == i %}
+                                    <li class="active"><a href="?page={{ i }}" data-page="{{ i }}">{{ i }}</a></li>
+                                {% else %}
+                                    <li><a href="?page={{ i }}" data-page="{{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                              {% endif %}
+                          {% endfor %}
+                          {% if purchases_display.has_next %}
+                            <li class="pager"><a href="?page={{ purchases_display.next_page_number }}" data-page="{{ purchases_display.next_page_number }}">›</a></li>
+                          {% endif %}
+                      </ul>
+                    </nav>
+                </div>
+                {% endif %}
+                      </div>
+              </div>
+
+            </div>
+
+        </div>
+      </div>
+
+    {% include "includes/footer.html" %}
+    
+  </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+
+{% endblock javascripts %}
