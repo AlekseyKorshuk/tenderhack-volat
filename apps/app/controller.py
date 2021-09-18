@@ -1,5 +1,6 @@
 from dateutil.relativedelta import relativedelta
 import datetime
+from apps.app.models import Auctions
 
 datetime_format = "%d.%m.%Y %H:%M:%S"
 
@@ -57,3 +58,10 @@ def get_purchase_stats(profile):
 
     return months, purchase_stats, total_spent, active
 
+
+def get_profiles_list():
+    query_set = Auctions.objects.values('id')
+    ids = []
+    for profile in query_set:
+        ids.append(profile['id'])
+    return ids

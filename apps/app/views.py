@@ -330,3 +330,9 @@ def analysis(request, *args, **kwargs):
     }
 
     return HttpResponse(html_template.render(context, request))
+
+
+class ProfilesJsonView(View):
+    def get(self, *args, **kwargs):
+        ids = get_profiles_list()
+        return JsonResponse({'count': len(ids), 'data': ids}, safe=False, json_dumps_params={'ensure_ascii': False})
