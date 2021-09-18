@@ -16,13 +16,14 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from apps.app.models import Auctions
 import json
 from django.db import models
+import random
+from django.shortcuts import redirect
 
 
 def index(request):
-    context = {'segment': 'index'}
-
-    html_template = loader.get_template('index.html')
-    return HttpResponse(html_template.render(context, request))
+    ids = get_profiles_list()
+    return redirect(f'/profile/{random.choice(ids)}')
+    # return HttpResponse(html_template.render(context, request))
 
 
 def profile(request, *args, **kwargs):
@@ -279,7 +280,7 @@ def analysis(request, *args, **kwargs):
                 achievement['iconName']
             ]['unlocked'] = True
 
-    html_template = loader.get_template('index.html')
+    html_template = loader.get_template('analysis.html')
 
     months, purchase_stats, total_spent, active = get_purchase_stats(profile)
 
