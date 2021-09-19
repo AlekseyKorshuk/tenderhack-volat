@@ -38,7 +38,8 @@ def get_purchase_stats(profile):
     total_spent = 0
     active = {
         'count': 0,
-        'price': 0
+        'price': 0,
+        'price_display': ""
     }
 
 
@@ -52,11 +53,13 @@ def get_purchase_stats(profile):
                 if 'auctionCurrentPrice' in purchase and purchase['auctionCurrentPrice']:
                     purchase_stats[date.month]['end_price'] += purchase['auctionCurrentPrice']
                     purchase_stats[date.month]['start_price'] += purchase['startPrice']
+                    total_spent += purchase['auctionCurrentPrice']
             if purchase['stateName'] == 'Активная':
                 active['count'] += 1
                 active['price'] += purchase['startPrice']
 
-    return months, purchase_stats, total_spent, active
+    active['price_display'] = f"{int(active['price']):,}".replace(',', ' ')
+    return months, purchase_stats, int(total_spent), active
 
 
 def get_profiles_list():

@@ -44,9 +44,9 @@
                 <div class="col-7">
                   <div class="numbers">
                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Потрачено</p>
-                    <h5 class="font-weight-bolder">{{spent_last_month}} ₽</h5>
+                    <h5 class="font-weight-bolder">{{total_spent}} ₽</h5>
                     {% if spent_last_month >= 0 %}
-                      <span class="text-success text-sm font-weight-bolder">+ {{spent_last_month}} ₽</span>
+                      <span class="text-success text-sm font-weight-bolder">+ {{spent_last_month_display}} ₽</span>
                     {% else %}
                       <span class="text-warning text-sm font-weight-bolder">- {{spent_last_month|abs}} ₽</span>
                     {% endif %}
@@ -69,11 +69,11 @@
                 <div class="col-7">
                   <div class="numbers">
                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Сэкономлено<br> </p>
-                    <h5 class="font-weight-bolder">{{saved_last_month}} ₽</h5>
+                    <h5 class="font-weight-bolder">{{saved_last_month_display}} ₽</h5>
                     {% if saved_price >= 0 %}
-                      <span class="text-success text-sm font-weight-bolder">+ {{saved_price}} ₽</span>
+                      <span class="text-success text-sm font-weight-bolder">+ {{saved_price_display}} ₽</span>
                     {% else %}
-                      <span class="text-warning text-sm font-weight-bolder">- {{saved_price|abs}} ₽</span>
+                      <span class="text-warning text-sm font-weight-bolder">- {{saved_price_display}} ₽</span>
                     {% endif %}
                   </div>
                 </div>
@@ -95,7 +95,7 @@
                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Активные закупки</p>
                     <h5 class="font-weight-bolder">{{purchases_active.count}}</h5>
                     На
-                    <span class="text-success text-sm font-weight-bolder">{{purchases_active.price}} ₽</span>
+                    <span class="text-success text-sm font-weight-bolder">{{purchases_active.price_display}} ₽</span>
                     <span class="text-sm"></span>
                   </div>
                 </div>

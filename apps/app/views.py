@@ -18,12 +18,13 @@ import json
 from django.db import models
 import random
 from django.shortcuts import redirect
-
+import datetime
 
 def index(request):
     ids = get_profiles_list()
     return redirect(f'/profile/{random.choice(ids)}')
     # return HttpResponse(html_template.render(context, request))
+
 
 def team(request, *args, **kwargs):
     user_id = kwargs.get('user_id')
@@ -114,6 +115,12 @@ def profile(request, *args, **kwargs):
         except:
             start_end_price_difference = 0
 
+    for i in range(len(profile['items'])):
+        profile['items'][i]['startPrice'] = f"{int(profile['items'][i]['startPrice']):,}".replace(',', ' ')
+        if profile['items'][i]['auctionCurrentPrice']:
+            profile['items'][i]['auctionCurrentPrice'] = f"{int(profile['items'][i]['auctionCurrentPrice']):,}".replace(',', ' ')
+
+    # f"{value:,}".replace(',', ' ')
     context = {
         'segment': 'index',
         'profile': profile,
@@ -124,13 +131,16 @@ def profile(request, *args, **kwargs):
         'purchase_stats_end_price': purchase_stats_end_price,
         'start_end_price_difference': start_end_price_difference,
         'saved_last_month': int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]),
+        'saved_last_month_display': f"{int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]):,}".replace(',', ' '),
         'spent_last_month': int(purchase_stats_end_price[-1]),
-        'total_purchases': len(profile['items']),
-        'purchases_last_month': purchase_stats_count[-1],
-        'total_spent': total_spent,
+        'spent_last_month_display': f"{purchase_stats_end_price[-1]:,}".replace(',', ' '),
+        'total_purchases': f"{len(profile['items']):,}".replace(',', ' '),
+        'purchases_last_month': f"{purchase_stats_count[-1]:,}".replace(',', ' '),
+        'total_spent': f"{total_spent:,}".replace(',', ' '),
         'purchases_active': active,
         'saved_price': int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]) - int(purchase_stats_start_price[-2] - purchase_stats_end_price[-2]),
-        'spent_price': int(purchase_stats_start_price[-1] - purchase_stats_start_price[-2]),
+        'saved_price_display': f"{abs(int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]) - int(purchase_stats_start_price[-2] - purchase_stats_end_price[-2])):,}".replace(',', ' '),
+        'spent_price': f"{int(purchase_stats_start_price[-1] - purchase_stats_start_price[-2]):,}".replace(',', ' '),
         'purchases_display': profile['items'][:min(len(profile['items']), 5)],
         'achievements': achievements
     }
@@ -183,6 +193,11 @@ def tables(request, *args, **kwargs):
         purchases = paginator.page(1)
     except EmptyPage:
         purchases = paginator.page(paginator.num_pages)
+
+    for i in range(len(profile['items'])):
+        profile['items'][i]['startPrice'] = f"{int(profile['items'][i]['startPrice']):,}".replace(',', ' ')
+        if profile['items'][i]['auctionCurrentPrice']:
+            profile['items'][i]['auctionCurrentPrice'] = f"{int(profile['items'][i]['auctionCurrentPrice']):,}".replace(',', ' ')
 
     context = {
         'segment': 'tables',
@@ -256,94 +271,50 @@ class PostJsonListView(View):
 def analysis(request, *args, **kwargs):
 
     user_id = kwargs.get('user_id')
-
     profile = get_profile(user_id)
-    achievements_list = get_achievements(user_id)
 
-    achievements = {
-        'SignedDocument': {
-            'items': [],
-            'unlocked': False
-        },
-        'SignedDocumentOne': {
-            'items': [],
-            'unlocked': False
-        },
-        'SignedDocumentTen': {
-            'items': [],
-            'unlocked': False
-        },
-        'SignedDocumentHundred': {
-            'items': [],
-            'unlocked': False
-        },
-        'Rocket': {
-            'items': [],
-            'unlocked': False
-        },
-        'Flag': {
-            'items': [],
-            'unlocked': False
-        },
-    }
+    months, purchase_stats, total_spent, active = get_purchase_stats(profile)
+    purchase_stats_count = [purchase_stats[key]['count'] for key in purchase_stats.keys()]
 
-    for achievement in achievements_list:
-        if achievement['unlocked']:
-            achievements[
-                achievement['iconName']
-            ]['items'].append(achievement['displayName'])
-            achievements[
-                achievement['iconName']
-            ]['unlocked'] = True
+    try:
+        auctions = Auctions.objects.get(id=user_id)
+        items = auctions.data['data']
+    except Exception as ex:
+        print(ex)
+        items = []
 
     html_template = loader.get_template('analysis.html')
 
-    months, purchase_stats, total_spent, active = get_purchase_stats(profile)
+    predicted_day = datetime.datetime(2021, 9, 24)
+    now = datetime.datetime.today()
+    difference_days = abs(predicted_day-now).days
 
-    purchase_stats_count = [purchase_stats[key]['count'] for key in purchase_stats.keys()]
-    purchase_stats_start_price = [int(purchase_stats[key]['start_price']) for key in purchase_stats.keys()]
-    purchase_stats_end_price = [int(purchase_stats[key]['end_price']) for key in purchase_stats.keys()]
+    total_sum = 100500
 
-    try:
-        delta_now = purchase_stats_start_price[-1] / purchase_stats_end_price[-1] * 100
-    except:
-        delta_now = purchase_stats_start_price[-1] * 100
+    product_list = [
+        {
+            'id': 100,
+            'imageId': 1934098657,
+            'name': 'Салфетки бумажные, 100 шт., 24х24 см, МЯГКИЙ ЗНАК, белые, 100% целлюлоза',
+            'currentValue': 10,
+            'costPerUnit': 26,
+            'score': 60,
+            'skuId': 1208289
+        }
+    ]
 
-    try:
-        delta_before = purchase_stats_start_price[-2] / purchase_stats_end_price[-2] * 100
-    except:
-        delta_before = purchase_stats_start_price[-2] * 100
-
-    if delta_now >= delta_before:
-        try:
-            start_end_price_difference = int(delta_now / delta_before)
-        except:
-            start_end_price_difference = 0
-    else:
-        try:
-            start_end_price_difference = -1 * int(delta_now / delta_before)
-        except:
-            start_end_price_difference = 0
+    for i in range(len(product_list)):
+        product_list[i]['totalCost'] = product_list[i]['currentValue'] * product_list[i]['costPerUnit']
 
     context = {
         'segment': 'analysis',
         'profile': profile,
-        'purchase_stats_count': purchase_stats_count,
-        'months': months,
-        'purchase_stats_count_max': max(purchase_stats_count),
-        'purchase_stats_start_price': purchase_stats_start_price,
-        'purchase_stats_end_price': purchase_stats_end_price,
-        'start_end_price_difference': start_end_price_difference,
-        'saved_last_month': int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]),
-        'spent_last_month': int(purchase_stats_end_price[-1]),
-        'total_purchases': len(profile['items']),
-        'purchases_last_month': purchase_stats_count[-1],
-        'total_spent': total_spent,
-        'purchases_active': active,
-        'saved_price': int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]) - int(purchase_stats_start_price[-2] - purchase_stats_end_price[-2]),
-        'spent_price': int(purchase_stats_start_price[-1] - purchase_stats_start_price[-2]),
-        'purchases_display': profile['items'][:min(len(profile['items']), 5)],
-        'achievements': achievements
+        'date': predicted_day.strftime('%d.%m.%Y'),
+        'difference_days': f"{difference_days:,}".replace(',', ' '),
+        'total_sum': f"{total_sum:,}".replace(',', ' '),
+        'total_purchases': f"{len(items):,}".replace(',', ' '),
+        'purchases_last_month': f"{purchase_stats_count[-1]:,}".replace(',', ' '),
+        'product_list': product_list
     }
 
     return HttpResponse(html_template.render(context, request))
