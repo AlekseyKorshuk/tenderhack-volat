@@ -25,6 +25,22 @@ def index(request):
     return redirect(f'/profile/{random.choice(ids)}')
     # return HttpResponse(html_template.render(context, request))
 
+def team(request, *args, **kwargs):
+    user_id = kwargs.get('user_id')
+
+    html_template = loader.get_template('team.html')
+    
+    context = {
+        'segment': 'team',
+        'profile': {
+            'company': {
+                'id': user_id
+            }
+        },
+    }
+    return HttpResponse(html_template.render(context, request))
+    # return HttpResponse(html_template.render(context, request))
+
 
 def profile(request, *args, **kwargs):
 

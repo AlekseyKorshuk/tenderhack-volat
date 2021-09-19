@@ -1,0 +1,419 @@
+{% extends 'layouts/base.html' %}
+
+{% load mathfilters %}
+
+{% block title %} Dashboard {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="row mt-4">
+        <div class="col-lg-12 mb-lg-0 mb-4">
+          <div class="card">
+            <div class="card-body p-3">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="d-flex flex-column h-100">
+                      <img src="/static/assets/img/volat.png" style="display: block;  margin-left: auto;  margin-right: auto;  width: 15%;">
+                      <h4 class="font-weight-bolder" style="margin-left: auto;  margin-right: auto;">VOLAT</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="container-fluid">
+          <ul class="card card-body">
+            <ul class="row gx-4">
+              <div class="col-auto">
+                <div class="avatar avatar-xl position-relative">
+                  <img src="/static/assets/img/team/korshuk.jpg" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+                </div>
+              </div>
+              <div class="col-auto my-auto">
+                <div class="h-100">
+                  <h5 class="mb-1">
+                    Aleksey Korshuk
+                  </h5>
+<!--                  <p class="mb-0 font-weight-bold text-sm">-->
+<!--                    CEO / Co-Founder-->
+<!--                  </p>-->
+                </div>
+              </div>
+              <ul class="col-lg-6 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
+                <ul class="nav-wrapper position-relative end-0">
+                  <ul class="nav nav-pills nav-fill p-1 bg-transparent" role="tablist">
+                    <li class="nav-item">
+                        <a href="https://github.com/AlekseyKorshuk" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/github.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.linkedin.com/in/aleksey-korshuk" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/linkedin.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.instagram.com/_goodimpression_/" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/instagram.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://twitter.com/alekseykorshuk" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/twitter.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://t.me/goodimpression" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/telegram.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+
+                </ul>
+              </ul>
+            </ul>
+          </ul>
+        </ul>
+
+      </div>
+    </div>
+    <div class="row mt-4">
+        <div class="container-fluid">
+          <ul class="card card-body">
+            <ul class="row gx-4">
+              <div class="col-auto">
+                <div class="avatar avatar-xl position-relative">
+                  <img src="/static/assets/img/team/maruf.jpg" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+                </div>
+              </div>
+              <div class="col-auto my-auto">
+                <div class="h-100">
+                  <h5 class="mb-1">
+                    Maruf Asatullaev
+                  </h5>
+<!--                  <p class="mb-0 font-weight-bold text-sm">-->
+<!--                    CEO / Co-Founder-->
+<!--                  </p>-->
+                </div>
+              </div>
+              <ul class="col-lg-6 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
+                <ul class="nav-wrapper position-relative end-0">
+                  <ul class="nav nav-pills nav-fill p-1 bg-transparent" role="tablist">
+                    <li class="nav-item">
+                        <a href="https://github.com/Maruf-co" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/github.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.linkedin.com/in/aleksey-korshuk" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/linkedin.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.instagram.com/edmonkaupervud" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/instagram.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.instagram.com/_goodimpression_/" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/twitter.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://t.me/Rescuemybrain" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/telegram.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+              </ul>
+            </ul>
+          </ul>
+        </ul>
+
+      </div>
+    </div>
+    <div class="row mt-4">
+        <div class="container-fluid">
+          <ul class="card card-body">
+            <ul class="row gx-4">
+              <div class="col-auto">
+                <div class="avatar avatar-xl position-relative">
+                  <img src="/static/assets/img/team/camille.jpg" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+                </div>
+              </div>
+              <div class="col-auto my-auto">
+                <div class="h-100">
+                  <h5 class="mb-1">
+                    Camille Khubbetdinov
+                  </h5>
+<!--                  <p class="mb-0 font-weight-bold text-sm">-->
+<!--                    CEO / Co-Founder-->
+<!--                  </p>-->
+                </div>
+              </div>
+              <ul class="col-lg-6 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
+                <ul class="nav-wrapper position-relative end-0">
+                  <ul class="nav nav-pills nav-fill p-1 bg-transparent" role="tablist">
+                    <li class="nav-item">
+                        <a href="https://github.com/AlekseyKorshuk" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/github.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.linkedin.com/in/aleksey-korshuk" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/linkedin.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.instagram.com/_goodimpression_/" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/instagram.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://twitter.com/alekseykorshuk" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/twitter.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://t.me/goodimpression" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/telegram.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+
+                </ul>
+              </ul>
+            </ul>
+          </ul>
+        </ul>
+
+      </div>
+    </div>
+    <div class="row mt-4">
+        <div class="container-fluid">
+          <ul class="card card-body">
+            <ul class="row gx-4">
+              <div class="col-auto">
+                <div class="avatar avatar-xl position-relative">
+                  <img src="/static/assets/img/team/damir.jpg" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+                </div>
+              </div>
+              <div class="col-auto my-auto">
+                <div class="h-100">
+                  <h5 class="mb-1">
+                    Damir Nurtdinov
+                  </h5>
+<!--                  <p class="mb-0 font-weight-bold text-sm">-->
+<!--                    CEO / Co-Founder-->
+<!--                  </p>-->
+                </div>
+              </div>
+              <ul class="col-lg-6 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
+                <ul class="nav-wrapper position-relative end-0">
+                  <ul class="nav nav-pills nav-fill p-1 bg-transparent" role="tablist">
+                    <li class="nav-item">
+                        <a href="https://github.com/Maruf-co" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/github.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.linkedin.com/in/aleksey-korshuk" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/linkedin.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.instagram.com/edmonkaupervud" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/instagram.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.instagram.com/_goodimpression_/" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/twitter.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://t.me/Rescuemybrain" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/telegram.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+              </ul>
+            </ul>
+          </ul>
+        </ul>
+
+      </div>
+    </div>
+    <div class="row mt-4">
+        <div class="container-fluid">
+          <ul class="card card-body">
+            <ul class="row gx-4">
+              <div class="col-auto">
+                <div class="avatar avatar-xl position-relative">
+                  <img src="/static/assets/img/team/makar.jpg" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+                </div>
+              </div>
+              <div class="col-auto my-auto">
+                <div class="h-100">
+                  <h5 class="mb-1">
+                    Makar Shevchenko
+                  </h5>
+<!--                  <p class="mb-0 font-weight-bold text-sm">-->
+<!--                    CEO / Co-Founder-->
+<!--                  </p>-->
+                </div>
+              </div>
+              <ul class="col-lg-6 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
+                <ul class="nav-wrapper position-relative end-0">
+                  <ul class="nav nav-pills nav-fill p-1 bg-transparent" role="tablist">
+                    <li class="nav-item">
+                        <a href="https://github.com/Maruf-co" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/github.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.linkedin.com/in/aleksey-korshuk" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/linkedin.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.instagram.com/edmonkaupervud" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/instagram.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.instagram.com/_goodimpression_/" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/twitter.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://t.me/Rescuemybrain" >
+                            <div class="d-flex">
+                                <div class="avatar avatar-xl border-radius-md p-0">
+                                     <img src="/static/assets/img/logos/telegram.png" alt="slack_logo">
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+              </ul>
+            </ul>
+          </ul>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+      {% include "includes/footer.html" %}
+
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+
+
+{% endblock javascripts %}

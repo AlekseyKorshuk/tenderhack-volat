@@ -29,3 +29,8 @@ core/static/assets/node_modules
 core/static/assets/yarn.lock
 core/static/assets/.temp
 !/db.sqlite3
+!/core/static/assets/img/logos/telegram.png
+!/core/static/assets/img/logos/linkedin.png
+!/core/static/assets/img/logos/instagram.png
+!/core/static/assets/img/logos/github.png
+!/core/static/assets/img/logos/twitter.png
