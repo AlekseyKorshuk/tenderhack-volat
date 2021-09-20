@@ -28,12 +28,14 @@
   {% include "includes/sidebar.html" %}
 
   <main class="main-content mt-4 border-radius-lg">
-    
+
     {% include "includes/navigation.html" %}
 
     {% block content %}{% endblock content %}
 
   </main>
+
+  {% include "includes/fixed-plugin.html" %}
 
   {% include "includes/scripts.html" %}
 

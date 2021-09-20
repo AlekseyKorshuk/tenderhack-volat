@@ -40,7 +40,22 @@ def team(request, *args, **kwargs):
         },
     }
     return HttpResponse(html_template.render(context, request))
-    # return HttpResponse(html_template.render(context, request))
+
+
+def how(request, *args, **kwargs):
+    user_id = kwargs.get('user_id')
+
+    html_template = loader.get_template('how.html')
+
+    context = {
+        'segment': 'how',
+        'profile': {
+            'company': {
+                'id': user_id
+            }
+        },
+    }
+    return HttpResponse(html_template.render(context, request))
 
 
 def profile(request, *args, **kwargs):

@@ -5,18 +5,12 @@
           <ol class="breadcrumb bg-transparent mb-0 pb-1 px-0 me-sm-6 me-12">
             <li class="breadcrumb-item"><a class="opacity-8 text-dark" href="javascript:;">Tender Hack</a></li>
             <li class="breadcrumb-item text-dark active" aria-current="page">
-              {% if 'index' in segment %} Панель {% elif 'tables' in segment %} Закупки {% else %} Анализ {% endif %}
+              {% if 'index' in segment %} Панель {% elif 'tables' in segment %} Закупки {% elif 'team' in segment %} Команда {% elif 'how' in segment %} Как это рабоатет? {% else %} Анализ {% endif %}
             </li>
           </ol>
         </nav>
         <div class="collapse navbar-collapse me-md-0 me-4" id="navbar">
           <ul class="navbar-nav mb-2 mb-sm-0 ms-sm-auto justify-content-sm-end">
-<!--            <li class="nav-item d-flex align-items-center">-->
-<!--              <a href="{% url 'logout' %}" -->
-<!--                 class="nav-link text-body text-uppercase font-weight-bold px-0">-->
-<!--                Выйти-->
-<!--              </a>-->
-<!--            </li>-->
             <li class="nav-item d-xl-none ps-4 d-flex align-items-center">
               <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
                 <div class="sidenav-toggler-inner">
