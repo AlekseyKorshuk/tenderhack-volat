@@ -46,3 +46,4 @@ class JSONField(models.TextField):
 class Auctions(models.Model):
     id = models.IntegerField(primary_key=True, unique=True)
     data = JSONField(null=True, blank=True)
+    prediction = JSONField(null=True, blank=True)

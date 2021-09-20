@@ -39,10 +39,13 @@ def _get_purchase_detailed(auction_id):
     return response
 
 
-def get_purchases_detailed(purchases):
-
+def get_purchases_detailed(purchases, data):
     items = []
     i = 0
+    if data is not None:
+        items = data['data']
+        i = len(items)
+
     while i < len(purchases):
         print(i)
         items.append(
