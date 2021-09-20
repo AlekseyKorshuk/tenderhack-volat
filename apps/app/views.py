@@ -304,7 +304,7 @@ def analysis(request, *args, **kwargs):
     now = datetime.datetime.today()
     difference_days = abs(predicted_day-now).days
 
-    total_sum = 100500
+    total_sum = 0
 
     product_list = [
         {
@@ -319,6 +319,7 @@ def analysis(request, *args, **kwargs):
     ]
 
     for i in range(len(product_list)):
+        total_sum += product_list[i]['currentValue'] * product_list[i]['costPerUnit']
         product_list[i]['totalCost'] = product_list[i]['currentValue'] * product_list[i]['costPerUnit']
 
     context = {
