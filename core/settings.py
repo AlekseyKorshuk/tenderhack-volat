@@ -7,6 +7,8 @@ import os
 from decouple import config
 from unipath import Path
 import django_heroku
+import mimetypes
+mimetypes.add_type("text/html", ".css", True)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).parent
@@ -17,7 +19,7 @@ SECRET_KEY = config('SECRET_KEY', default='S#perS3crEt_1122')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = config('DEBUG', default=True, cast=bool)
-DEBUG = True
+DEBUG = False
 # DEVEL = True
 
 # load production server from .env
