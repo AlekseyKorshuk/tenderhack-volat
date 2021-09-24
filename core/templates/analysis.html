@@ -35,96 +35,169 @@
           </div>
         </div>
       </div>
-    <div class="row mt-4">
-<!--        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">-->
+<!--    <div class="row mt-4">-->
+<!--&lt;!&ndash;        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">&ndash;&gt;-->
+<!--&lt;!&ndash;          <div class="card">&ndash;&gt;-->
+<!--&lt;!&ndash;            <div class="card-body p-3">&ndash;&gt;-->
+<!--&lt;!&ndash;              <div class="row">&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="col-7">&ndash;&gt;-->
+<!--&lt;!&ndash;                  <div class="numbers">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Потрачено</p>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <h5 class="font-weight-bolder">{{spent_last_month}} ₽</h5>&ndash;&gt;-->
+<!--&lt;!&ndash;                    {% if spent_last_month >= 0 %}&ndash;&gt;-->
+<!--&lt;!&ndash;                      <span class="text-success text-sm font-weight-bolder">+ {{spent_last_month}} ₽</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                    {% else %}&ndash;&gt;-->
+<!--&lt;!&ndash;                      <span class="text-warning text-sm font-weight-bolder">- {{spent_last_month|abs}} ₽</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                    {% endif %}&ndash;&gt;-->
+<!--&lt;!&ndash;                    <span class="text-sm"></span>&ndash;&gt;-->
+<!--&lt;!&ndash;                  </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="col-5 text-end my-auto">&ndash;&gt;-->
+<!--&lt;!&ndash;                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="ni ni-money-coins text-lg opacity-10" aria-hidden="true"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                  </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;              </div>&ndash;&gt;-->
+<!--&lt;!&ndash;            </div>&ndash;&gt;-->
+<!--&lt;!&ndash;          </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--        <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">-->
 <!--          <div class="card">-->
 <!--            <div class="card-body p-3">-->
 <!--              <div class="row">-->
 <!--                <div class="col-7">-->
 <!--                  <div class="numbers">-->
-<!--                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Потрачено</p>-->
-<!--                    <h5 class="font-weight-bolder">{{spent_last_month}} ₽</h5>-->
-<!--                    {% if spent_last_month >= 0 %}-->
-<!--                      <span class="text-success text-sm font-weight-bolder">+ {{spent_last_month}} ₽</span>-->
-<!--                    {% else %}-->
-<!--                      <span class="text-warning text-sm font-weight-bolder">- {{spent_last_month|abs}} ₽</span>-->
-<!--                    {% endif %}-->
-<!--                    <span class="text-sm"></span>-->
+<!--                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Дата закупки<br> </p>-->
+<!--                    <h5 class="font-weight-bolder"> {{date}} </h5>-->
+<!--                    Через <span class="text-success text-sm font-weight-bolder">{{difference_days}} дней</span>-->
 <!--                  </div>-->
 <!--                </div>-->
 <!--                <div class="col-5 text-end my-auto">-->
 <!--                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">-->
-<!--                    <i class="ni ni-money-coins text-lg opacity-10" aria-hidden="true"></i>-->
+<!--                    <i class="ni ni-watch-time text-lg opacity-10" aria-hidden="true"></i>-->
 <!--                  </div>-->
 <!--                </div>-->
 <!--              </div>-->
 <!--            </div>-->
 <!--          </div>-->
 <!--        </div>-->
-        <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+<!--        <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4" style="cursor: pointer;">-->
+<!--          <div class="card">-->
+<!--            <div class="card-body p-3">-->
+<!--              <div class="row">-->
+<!--                <div class="col-7">-->
+<!--                  <div class="numbers">-->
+<!--                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Ожидаемый расход</p>-->
+<!--                    <h5 class="font-weight-bolder">{{total_sum}} ₽</h5>-->
+<!--                    Из начальных цен-->
+<!--                    <span class="text-sm"></span>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--                <div class="col-5 text-end my-auto">-->
+<!--                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">-->
+<!--                    <i class="ni ni-credit-card text-lg opacity-10" aria-hidden="true"></i>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="col-xl-4 col-sm-6" onclick="location.href='/tables/{{profile.company.id}}';" style="cursor: pointer;">-->
+<!--          <div class="card">-->
+<!--            <div class="card-body p-3">-->
+<!--              <div class="row">-->
+<!--                <div class="col-7">-->
+<!--                  <div class="numbers">-->
+<!--                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Закупок</p>-->
+<!--                    <h5 class="font-weight-bolder">{{total_purchases}}</h5>-->
+<!--                    <span class="text-success text-sm font-weight-bolder">+ {{purchases_last_month}}</span>-->
+<!--                    <span class="text-sm">за месяц</span>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--                <div class="col-5 text-end my-auto">-->
+<!--                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">-->
+<!--                    <i class="ni ni-cart text-lg opacity-10" aria-hidden="true"></i>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+    <div class="row mt-4">
+        <div class="col-lg-6 col-sm-6">
           <div class="card">
-            <div class="card-body p-3">
-              <div class="row">
-                <div class="col-7">
-                  <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Дата закупки<br> </p>
-                    <h5 class="font-weight-bolder"> {{date}} </h5>
-                    Через <span class="text-success text-sm font-weight-bolder">{{difference_days}} дней</span>
-                  </div>
-                </div>
-                <div class="col-5 text-end my-auto">
-                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                    <i class="ni ni-watch-time text-lg opacity-10" aria-hidden="true"></i>
-                  </div>
-                </div>
-              </div>
+            <div class="card-header p-3 pb-0">
+              <h6 class="mb-0">Возможно интересно</h6>
+              <p class="text-sm mb-0 text-capitalize font-weight-bold">Похожие товары</p>
             </div>
-          </div>
-        </div>
-        <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4" style="cursor: pointer;">
-          <div class="card">
-            <div class="card-body p-3">
-              <div class="row">
-                <div class="col-7">
-                  <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Ожидаемый расход</p>
-                    <h5 class="font-weight-bolder">{{total_sum}} ₽</h5>
-                    Из начальных цен
-                    <span class="text-sm"></span>
-                  </div>
-                </div>
-                <div class="col-5 text-end my-auto">
-                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                    <i class="ni ni-credit-card text-lg opacity-10" aria-hidden="true"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-xl-4 col-sm-6" onclick="location.href='/tables/{{profile.company.id}}';" style="cursor: pointer;">
-          <div class="card">
-            <div class="card-body p-3">
-              <div class="row">
-                <div class="col-7">
-                  <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Закупок</p>
-                    <h5 class="font-weight-bolder">{{total_purchases}}</h5>
-                    <span class="text-success text-sm font-weight-bolder">+ {{purchases_last_month}}</span>
-                    <span class="text-sm">за месяц</span>
-                  </div>
-                </div>
-                <div class="col-5 text-end my-auto">
-                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                    <i class="ni ni-cart text-lg opacity-10" aria-hidden="true"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+            <div class="card-body border-radius-lg p-3">
+                {% for item in products_suggest %}
+                <div class="d-flex {% if forloop.counter > 1 %} mt-4 {% endif %}">
+                    <div>
+                      <div class="icon icon-shape bg-info-soft shadow text-center border-radius-md shadow-none">
+    <!--                    <i class="ni ni-money-coins text-lg text-info text-gradient opacity-10" aria-hidden="true"></i>-->
+                          <img src="{{item.image}}" class="avatar avatar-sm me-4" style="width: auto !important">
 
+                      </div>
+                    </div>
+                    <div class="ms-3">
+                      <div class="numbers">
+                        <h6 class="mb-1 text-dark text-sm">{{item.name}}</h6>
+                        <span class="text-sm">{{item.category}}</span>
+                      </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-12 mt-4 mt-lg-0">
+          <div class="card h-100">
+            <div class="card-header pb-0 p-3">
+              <div class="d-flex align-items-center">
+                <h6 class="mb-0">Категории</h6>
+                <button type="button" class="btn btn-icon-only btn-rounded btn-outline-secondary mb-0 ms-2 btn-sm d-flex align-items-center justify-content-center ms-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="" data-bs-original-title="Статистика популярности закупок по категориям на основе Ваших данных">
+                  <i class="fas fa-info" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body p-3">
+              <div class="row">
+                <div class="col-lg-5 col-12 text-center">
+                  <div class="chart mt-4">
+                    <canvas id="chart-doughnut" class="chart-canvas" height="250" width="218" style="display: block; box-sizing: border-box; height: 200px; width: 174.7px;"></canvas>
+                  </div>
+                </div>
+                <div class="col-lg-7 col-12">
+                  <div class="table-responsive">
+                    <table class="table align-items-center mb-0">
+                      <tbody>
+                      {% for item in categories_stats.list %}
+                        <tr>
+                          <td>
+                            <div class="d-flex px-2 py-1">
+<!--                                <span class="d-flex flex-column justify-content-center" style="  height: 3%;  width: 3%;  background-color: #bbb;  border-radius: 50%;   display:table-cell; vertical-align:middle;"></span>-->
+                              <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm" style="width: 235px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis"> {{item.title}}</h6>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="align-middle text-center text-sm">
+                            <span class="text-xs font-weight-bold"> {{item.value}}% </span>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
     <div class="row my-4">
         <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
           <div class="card">
@@ -152,21 +225,21 @@
                 <table class="table align-items-center mb-0">
                   <thead>
                     <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Товар</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-7">Количество</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Цена за ед.</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Общая стоимость</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Уверенность</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-8">Товар</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-9">Мин. цена</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Макс. цена</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Дата</th>
+<!--                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Уверенность</th>-->
                     </tr>
                   </thead>
                   <tbody>
-                  {% for item in product_list %}
+                  {% for item in purchases_list %}
                     <tr>
                       <td>
-                          <a href="https://zakupki.mos.ru/sku/view/{{item.skuId}}">
+                          <a href="https://zakupki.mos.ru/sku/view/{{item.id}}">
                             <div class="d-flex px-2 py-1">
                               <div>
-                                <img src="https://zakupki.mos.ru/newapi/api/Core/Thumbnail/{{item.imageId}}/140/140" class="avatar avatar-sm me-3" style="width: auto !important">
+                                <img src="{{item.image}}" class="avatar avatar-sm me-3" style="width: auto !important">
                               </div>
                               <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-sm" style="width: 200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{item.name}} </h6>
@@ -175,26 +248,26 @@
                           </a>
                       </td>
                       <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> {{item.currentValue}} </span>
+                        <span class="text-xs font-weight-bold"> {{item.minPrice}} ₽</span>
                       </td>
                       <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> {{item.costPerUnit}} ₽ </span>
+                        <span class="text-xs font-weight-bold"> {{item.maxPrice}} ₽ </span>
                       </td>
                       <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> {{item.totalCost}} ₽ </span>
+                        <span class="text-xs font-weight-bold"> {{item.date}} </span>
                       </td>
-                      <td class="align-middle">
-                        <div class="progress-wrapper">
-                          <div class="progress-info">
-                            <div class="progress-percentage">
-                              <span class="text-xs font-weight-bold">{{item.score}}%</span>
-                            </div>
-                          </div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-info w-{{item.score}}" role="progressbar" aria-valuenow="{{item.score}}" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </td>
+<!--                      <td class="align-middle">-->
+<!--                        <div class="progress-wrapper">-->
+<!--                          <div class="progress-info">-->
+<!--                            <div class="progress-percentage">-->
+<!--                              <span class="text-xs font-weight-bold">{{item.score}}%</span>-->
+<!--                            </div>-->
+<!--                          </div>-->
+<!--                          <div class="progress">-->
+<!--                            <div class="progress-bar bg-gradient-info w-{{item.score}}" role="progressbar" aria-valuenow="{{item.score}}" aria-valuemin="0" aria-valuemax="100"></div>-->
+<!--                          </div>-->
+<!--                        </div>-->
+<!--                      </td>-->
                     </tr>
                   {% endfor %}
                   </tbody>
@@ -205,6 +278,7 @@
     </div>
       </div>
 
+    </div>
       {% include "includes/footer.html" %}
 
 
@@ -214,7 +288,7 @@
 {% block javascripts %}
 
   <script src="/static/assets/js/plugins/chartjs.min.js"></script>
-  <script src="/static/assets/js/plugins/Chart.extension.js"></script>
+<!--  <script src="/static/assets/js/plugins/Chart.extension.js"></script>-->
   <script>
     var ctx = document.getElementById("chart-bars").getContext("2d");
 
@@ -369,6 +443,66 @@
       },
     });
   </script>
+  <script>
+      var ctx2 = document.getElementById("chart-doughnut").getContext("2d");
+
+      // Doughnut chart
+      new Chart(ctx2, {
+        type: "doughnut",
+        data: {
+          labels: {{ categories_stats.titles|safe }},
+          datasets: [{
+            label: "Категории",
+            weight: 9,
+            cutout: 60,
+            tension: 0.9,
+            pointRadius: 2,
+            borderWidth: 2,
+            backgroundColor: ['#2152ff', '#3A416F', '#f53939', '#a8b8d8', '#466d1d','#cb0c9f'],
+            data: {{ categories_stats.values }},
+            fill: false
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false,
+            }
+          },
+          interaction: {
+            intersect: false,
+            mode: 'index',
+          },
+          scales: {
+            y: {
+              grid: {
+                drawBorder: false,
+                display: false,
+                drawOnChartArea: false,
+                drawTicks: false,
+              },
+              ticks: {
+                display: false
+              }
+            },
+            x: {
+              grid: {
+                drawBorder: false,
+                display: false,
+                drawOnChartArea: false,
+                drawTicks: false,
+              },
+              ticks: {
+                display: false,
+              }
+            },
+          },
+        },
+      });
+    </script>
+
   <script>
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {

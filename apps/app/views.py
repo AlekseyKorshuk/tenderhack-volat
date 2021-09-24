@@ -20,6 +20,9 @@ import random
 from django.shortcuts import redirect
 import datetime
 
+
+
+
 def index(request):
     ids = get_profiles_list()
     return redirect(f'/profile/{random.choice(ids)}')
@@ -293,70 +296,22 @@ def analysis(request, *args, **kwargs):
     user_id = kwargs.get('user_id')
     if user_id is None:
         user_id = random.choice(get_profiles_list())
-
-    profile = get_profile(user_id)
-
-    months, purchase_stats, total_spent, active = get_purchase_stats(profile)
-    purchase_stats_count = [purchase_stats[key]['count'] for key in purchase_stats.keys()]
-
-    changed = False
-    try:
-        auctions = Auctions.objects.get(id=user_id)
-        if auctions.data == None or len(profile['items']) != len(auctions.data['data']):
-            items = get_purchases_detailed(profile['items'], auctions.data)
-            auctions.data = {'count': len(items), 'data': items}
-            auctions.save()
-            changed = True
-        else:
-            items = auctions.data['data']
-    except Auctions.DoesNotExist:
-        auctions = Auctions.objects.create(id=user_id)
-        items = get_purchases_detailed(profile['items'], None)
-        auctions.data = {'count': len(items), 'data': items}
-        auctions.save()
-        changed = True
-
     html_template = loader.get_template('analysis.html')
-
-    if changed or auctions.prediction is None:
-        predicted_day = datetime.datetime(2021, 9, 24)
-        now = datetime.datetime.today()
-        difference_days = abs(predicted_day - now).days
-        total_sum = 0
-        # Prediction here
-        product_list = [
-            {
-                'id': 100,
-                'imageId': 1934098657,
-                'name': 'Салфетки бумажные, 100 шт., 24х24 см, МЯГКИЙ ЗНАК, белые, 100% целлюлоза',
-                'currentValue': 10,
-                'costPerUnit': 26,
-                'score': 60,
-                'skuId': 1208289
+    inn = getINNByID(user_id)
+    profile = {
+            'company': {
+                'id': user_id
             }
-        ]
-
-        for i in range(len(product_list)):
-            total_sum += product_list[i]['currentValue'] * product_list[i]['costPerUnit']
-            product_list[i]['totalCost'] = product_list[i]['currentValue'] * product_list[i]['costPerUnit']
-
-        prediction_json = {
-            'date': predicted_day.strftime('%d.%m.%Y'),
-            'difference_days': f"{difference_days:,}".replace(',', ' '),
-            'total_sum': f"{total_sum:,}".replace(',', ' '),
-            'product_list': product_list
         }
-    else:
-        prediction_json = auctions.prediction
 
     context = {
         'segment': 'analysis',
         'profile': profile,
-        'total_purchases': f"{len(items):,}".replace(',', ' '),
-        'purchases_last_month': f"{purchase_stats_count[-1]:,}".replace(',', ' '),
+        'products_suggest': predictSuggestions(inn),
+        'purchases_list': predictPurchases(inn)
     }
 
-    context.update(prediction_json)
+    context.update(getCategoriesStats(user_id))
 
     return HttpResponse(html_template.render(context, request))
 
