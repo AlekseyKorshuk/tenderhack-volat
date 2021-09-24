@@ -6,15 +6,14 @@ import requests
 import json
 import time
 
-print("Parsing auctions.xlsx")
-auctions = pd.read_excel("datasets/auctions.xlsx", sheet_name="Запрос1")
-print("Parsing products.xlsx")
-products = pd.read_excel("datasets/products.xlsx", sheet_name="Запрос1")
-print("Parsing done")
+auctions = None
+products = None
+
 with open('datasets/id_to_inn.txt', ) as f:
     id_to_inn = json.load(f)
 
 datetime_format = "%d.%m.%Y %H:%M:%S"
+
 
 
 def get_purchase_stats(profile):
@@ -159,6 +158,7 @@ def getCategoriesStats(id):
         }
     }
 
+
 def predictSuggestions(inn):
     product_list = _predictSuggestions(inn, auctions)
     result_list = []
@@ -211,3 +211,17 @@ def _predictPurchases(inn, df):
     ]
 
     return product_list
+
+
+def start():
+    global auctions, products
+
+    if auctions is None:
+        print("Parsing auctions.xlsx")
+        auctions = pd.read_excel("datasets/auctions.xlsx", sheet_name="Запрос1")
+        print("Parsing done")
+
+    if products is None:
+        print("Parsing products.xlsx")
+        products = pd.read_excel("datasets/products.xlsx", sheet_name="Запрос1")
+        print("Parsing done")
