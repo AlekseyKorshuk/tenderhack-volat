@@ -293,7 +293,7 @@ class PostJsonListView(View):
 
 def analysis(request, *args, **kwargs):
 
-    start()
+
     user_id = kwargs.get('user_id')
     if user_id is None:
         user_id = random.choice(get_profiles_list())
