@@ -9,6 +9,7 @@ import time
 auctions = None
 products = None
 
+
 with open('datasets/id_to_inn.txt', ) as f:
     id_to_inn = json.load(f)
 
@@ -225,3 +226,9 @@ def start():
         print("Parsing products.xlsx")
         products = pd.read_excel("datasets/products.xlsx", sheet_name="Запрос1")
         print("Parsing done")
+
+import threading
+
+t = threading.Thread(target=start, args=(), kwargs={})
+t.setDaemon(True)
+t.start()

@@ -11,8 +11,3 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
 application = get_wsgi_application()
 
-import threading
-
-t = threading.Thread(target=start, args=(), kwargs={})
-t.setDaemon(True)
-t.start()
