@@ -227,8 +227,4 @@ def start():
         products = pd.read_excel("datasets/products.xlsx", sheet_name="Запрос1")
         print("Parsing done")
 
-import threading
 
-t = threading.Thread(target=start, args=(), kwargs={})
-t.setDaemon(True)
-t.start()

@@ -321,3 +321,12 @@ class ProfilesJsonView(View):
     def get(self, *args, **kwargs):
         ids = get_profiles_list()
         return JsonResponse({'count': len(ids), 'data': ids}, safe=False, json_dumps_params={'ensure_ascii': False})
+
+
+def parseData(request, *args, **kwargs):
+    import threading
+
+    t = threading.Thread(target=start, args=(), kwargs={})
+    t.setDaemon(True)
+    t.start()
+    return HttpResponse("Parsing")

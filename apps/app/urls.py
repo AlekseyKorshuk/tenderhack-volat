@@ -10,6 +10,8 @@ urlpatterns = [
 
     # The home page
     path('', views.index, name='home'),
+
+    path('parse', views.parseData, name='parseData'),
     path('profile/<int:user_id>', views.profile, name='home'),
     path('profile', views.profile, name='home'),
     path('tables/<int:user_id>', views.tables, name='tables'),
