@@ -1,10 +1,7 @@
 import json
-
 import pandas as pd
-
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-
 import datetime
 import dateutil.relativedelta as relativedelta
 
@@ -254,13 +251,77 @@ def periods_info(user_inn, pd_data):
             cat_period = periods_sum / periods_num
         if cat_period:
             if demiseason_len and (datetime.date.today() - last_buy).days > threashold_x_period * cat_period:
-                next_buy = last_buy + relativedelta.relativedelta(day=demiseason_len)
+                next_buy = last_buy + relativedelta.relativedelta(day=int(demiseason_len))
             else:
-                next_buy = last_buy + relativedelta.relativedelta(day=cat_period)
+                next_buy = last_buy + relativedelta.relativedelta(day=int(cat_period))
             period_info[cat] = (cat_period, demiseason_len, season_quantity, current_quantity,
                                 last_buy, last_item, is_enough, next_buy)
 
     return period_info
 
+
+import numpy as np
+import sklearn.linear_model as linearRegr
+
+def sorted_data(data):
+  data_copy = data
+  for key in data:
+    array = data[key]
+    data_copy[key] = sorted(array, key = lambda tup: datetime.datetime.strptime(tup[0], "%d.%m.%Y"))
+  return data_copy
+
+def predict_next(x_space, y_space):
+  regr = linearRegr.LinearRegression()
+  lin_model = regr.fit(np.array(x_space).reshape(-1, 1), y_space)
+  return lin_model.predict(np.array([len(x_space)]).reshape(-1, 1))
+
+def maximum_tuple_in_dict(d):
+  to_be_sorted = []
+  for key in d:
+    if d[key][1] < 50:
+      to_be_sorted.append((key, d[key][1]))
+  to_be_sorted = sorted(to_be_sorted, key = lambda tup: tup[1], reverse = True)
+  output = []
+  for i in range(len(to_be_sorted) if len(to_be_sorted) < 5 else 5):
+    dic = {}
+    key = to_be_sorted[i][0]
+    dic["name"] = key
+    dic["data"] = d[key][0]
+    dic["percentage"] = d[key][1]
+    output.append(dic)
+  return output
+
+def predict_categories_trend(data, categories):
+  DAYS_IN_MONTH = 30
+  MONTHS_IN_PAST = 11
+  DAYS_IN_PAST = MONTHS_IN_PAST * DAYS_IN_MONTH
+  initial_date = datetime.datetime.now().date() - datetime.timedelta(DAYS_IN_PAST)
+  data = sorted_data(data)
+
+  categories_to_spaces = {}
+  for key in data:
+    if not key in categories:
+      continue
+    x_space = []
+    y_space = []
+    for tuple in data[key]:
+      current = datetime.datetime.strptime(tuple[0], "%d.%m.%Y").date()
+      if (datetime.datetime.now().date() - current).days < DAYS_IN_PAST:
+        x_space.append((current - initial_date).days)
+        y_space.append(tuple[1])
+    if len(x_space) < 3:
+      continue
+    approx = np.polyfit(x_space, y_space, 4)
+    p = np.poly1d(approx)
+    # fig, ax = plt.subplots()
+    # ax.plot(x_space, p(x_space))
+    # ax.plot(x_space, y_space)
+    months = []
+    for i in range(11):
+      months.append(p(i*DAYS_IN_MONTH))
+    months.append(predict_next(x_space, p(x_space))[0])
+    percent = (months[len(months)-1]-months[len(months)-2])/(months[len(months)-2])*100
+    categories_to_spaces[key] = (months, percent)
+  return maximum_tuple_in_dict(categories_to_spaces)
 
 

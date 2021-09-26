@@ -3,7 +3,7 @@ import requests
 profile_url = 'https://zakupki.mos.ru/newapi/api/CompanyProfile/GetByCompanyId?companyId={USER_ID}'
 pear_page = 1000
 import time
-
+from apps.app.controller import auctions
 def get_purchase_customer(customer_id):
     items = []
     count = -1
@@ -47,30 +47,55 @@ def get_profile(user_id):
         'https://zakupki.mos.ru/newapi/api/CompanyProfile/GetByCompanyId?companyId={USER_ID}'.format(USER_ID=str(user_id))
     ).json()
 
-    response_temp = requests.get(f'https://zakupki.mos.ru/newapi/api/Company/GetIdBySupplierId?supplierId={user_id}')
-    is_supplier = False
-    result_user_id = None
-    if response_temp.status_code != 204:
-        is_supplier = True
-        result_user_id = int(response_temp.text)
+    # response_temp = requests.get(f'https://zakupki.mos.ru/newapi/api/Company/GetIdBySupplierId?supplierId={user_id}')
+    # is_supplier = False
+    # result_user_id = None
+    # if response_temp.status_code != 204:
+    #     is_supplier = True
+    #     result_user_id = int(response_temp.text)
+    # else:
+    #     response_temp = requests.get(f'https://zakupki.mos.ru/newapi/api/Company/GetIdByCustomerId?customerId={user_id}')
+    #     if response_temp.status_code != 204:
+    #       result_user_id = int(response_temp.text)
+    #     else:
+    #       if response['company']['supplierId'] is not None:
+    #         user_id = response['company']['supplierId']
+    #         is_supplier = True
+    #       elif response['company']['customerId'] is not None:
+    #         result_user_id = response['company']['customerId']
+
+    # customer_count = 0
+    # supplier_count = 0
+    #
+    # try:
+    #     response_temp = requests.get(
+    #         'https://old.zakupki.mos.ru/api/Cssp/Purchase/Query?queryDto={%22filter%22:{%22customerCompanyId%22:' + str(response['']) + ',%22auctionSpecificFilter%22:{%22stateIdIn%22:[19000002,19000005,19000003,19000004,19000008]},%22needSpecificFilter%22:{},%22tenderSpecificFilter%22:{}},%22order%22:[{%22field%22:%22relevance%22,%22desc%22:true}],%22withCount%22:true,%22take%22:1,%22skip%22:0}'
+    #     ).json()
+    #     customer_count = response_temp['count']
+    # except:
+    #     response_temp = requests.get(
+    #         'https://zakupki.mos.ru/newapi/api/Contract/Query?queryFilter={%22filter%22:{%22number%22:{%22contains%22:true},%22type%22:{},%22beginEndDate%22:{},%22conclusionDate%22:{},%22conclusionReason%22:{},%22customerKeyword%22:{%22contains%22:true},%22customerRegionTreePathId%22:{},%22federalLaw%22:{},%22offer%22:{},%22supplierId%22:' + str(user_id) + ',%22offerRegisterNumber%22:{%22contains%22:true},%22okpdTreePathId%22:{},%22placingOrder%22:{},%22productionTreePathId%22:{},%22registerNumber%22:{%22contains%22:true},%22rubSum%22:{},%22sku%22:{},%22state%22:{},%22subject%22:{%22contains%22:true},%22supplierKeyword%22:{%22contains%22:true},%22purchaseRegisterNumber%22:{%22contains%22:true}},%22order%22:[{%22field%22:%22relevance%22,%22desc%22:true}],%22withCount%22:true,%22take%22:1,%22skip%22:0}%27'
+    #     ).json()
+    #     supplier_count = response_temp['count']
+    #
+    # print(supplier_count , customer_count)
+    # if supplier_count > customer_count:
+    #     is_supplier = False
+    # else:
+    #     is_supplier = False
+
+    if response['company']['inn'] in auctions['ИНН заказчика'].unique():
+        is_supplier = False
     else:
-        response_temp = requests.get(f'https://zakupki.mos.ru/newapi/api/Company/GetIdByCustomerId?customerId={user_id}')
-        if response_temp.status_code != 204:
-          result_user_id = int(response_temp.text)
-        else:
-          if response['company']['supplierId'] is not None:
-            user_id = response['company']['supplierId']
-            is_supplier = True
-          elif response['company']['customerId'] is not None:
-            result_user_id = response['company']['customerId']
+        is_supplier = True
 
     if not is_supplier:
         response['items'] = get_purchase_customer(user_id)
     else:
-        response['items'] = get_purchase_supplier(user_id)
+        response['items'] = get_purchase_supplier(response['company']['supplierId'])
 
     response['isSupplier'] = is_supplier
-    return response, is_supplier, result_user_id
+    return response, is_supplier, user_id
 
 
 def _get_purchase_detailed(auction_id):

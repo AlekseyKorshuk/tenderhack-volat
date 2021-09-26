@@ -18,6 +18,7 @@ urlpatterns = [
     path('team/<int:user_id>', views.team, name='team'),
     path('team', views.team, name='team'),
     path('how/<int:user_id>', views.how, name='how'),
+    path('inn/<str:inn>', views.inn, name='inn'),
     path('how', views.how, name='how'),
     path('auctions/<int:customer_id>', views.PostJsonListView.as_view(), name='users-json-view'),
     path('profiles', views.ProfilesJsonView.as_view(), name='profiles'),

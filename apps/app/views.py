@@ -1,7 +1,4 @@
 # -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
 
 from django import template
 from django.contrib.auth.decorators import login_required
@@ -22,11 +19,21 @@ import datetime
 from numpy import median
 
 
-
 def index(request):
     ids = get_profiles_list()
     return redirect(f'/profile/{random.choice(ids)}')
     # return HttpResponse(html_template.render(context, request))
+
+
+def inn(request, *args, **kwargs):
+    inn = str(kwargs.get('inn'))
+    user_id = None
+    response = requests.get(
+        'https://zakupki.mos.ru/newapi/api/company/Query?filter={"filter":{"inn":{"value":"' + str(inn) + '"},"kpp":{"value":""},"name":{"value":"","contains":true},"regionRegisterTreePathId":{},"okopfId":{},"productionTreePathId":{},"productionDirectoryTreePathId":{},"offerRegionTreePathId":{},"type":{},"registrationDate":{},"enabledFederalLawIds":{}},"order":[{"field":"RegistrationDate","desc":true}],"withCount":true,"take":10,"skip":0}'
+    ).json()
+
+    user_id = response['items'][0]['id']
+    return redirect(f'/profile/{user_id}')
 
 
 def team(request, *args, **kwargs):
@@ -74,6 +81,7 @@ def profile(request, *args, **kwargs):
 
     if not is_supplier:
         purchases_list = predictPurchases(inn)
+
 
         months, purchase_stats, total_spent, active = get_purchase_stats(profile)
 
@@ -177,7 +185,7 @@ def profile(request, *args, **kwargs):
             'achievements': achievements
         }
     else:
-        purchases_list = predictTrand(inn)
+        _, purchases_list = predictTrand(inn)
         months, purchase_stats, total_spent, active = get_contract_stats(profile)
 
         html_template = loader.get_template('supplier.html')
@@ -283,7 +291,7 @@ def tables(request, *args, **kwargs):
         purchase_stats_count = [purchase_stats[key]['count'] for key in purchase_stats.keys()]
         for i in range(len(profile['items'])):
             profile['items'][i]['rubSum'] = f"{int(profile['items'][i]['rubSum']):,}".replace(',', ' ')
-        purchases_list = predictTrand(inn)
+        _, purchases_list = predictTrand(inn)
 
     paginator = Paginator(profile['items'], 8)
 
@@ -370,41 +378,53 @@ def analysis(request, *args, **kwargs):
 
     if not is_supplier:
         html_template = loader.get_template('analysis.html')
-        purchases_list = predictPurchases(inn)
-
-
-        # for i in range(len(purchases_list)):
-        #     product_id = purchases_list[i]['id']
-        #     print(product_id)
-        #     prices = []
-        #     data = auctions.loc[auctions['ИНН заказчика'] == str(inn)]
-        #     for index, row in data.iterrows():
-        #         for item in json.loads(row['СТЕ']):
-        #             if item['Id'] == product_id:
-        #                 prices.append(
-        #                     float(item["Amount"] / item["Quantity"])
-        #                 )
-        #     print(prices)
-        #
-        #     purchases_list[i]['deltaPrice'] = float(median(prices)) - float(purchases_list[i]['minPrice'])
-
+        notifications_dict = predictPurchases(inn)
         context = {
             'segment': 'analysis',
             'profile': profile,
             'products_suggest': predictSuggestions(inn), #predictSuggestions(inn)
-            'purchases_list': purchases_list,
+            'purchases_list': notifications_dict,
         }
 
     else:
         html_template = loader.get_template('analysis-supplier.html')
-        purchases_list = predictTrand(inn)
+
+        now = datetime.datetime.now()
+
+        months_dict = {
+            9: "Сентябрь",
+            10: "Октябрь",
+            11: "Ноябрь",
+            12: "Декабрь",
+            1: "Январь",
+            2: "Февраль",
+            3: "Март",
+            4: "Апрель",
+            5: "Май",
+            6: "Июнь",
+            7: "Июль",
+            8: "Август",
+        }
+
+        months = []
+        for i in range(now.month - 1, now.month - 13, -1):
+            months.append(
+                months_dict[i % 12 + 1]
+            )
+
+        months.reverse()
+        item = months.pop(0)
+        months.append(item)
+
+        purchases_list, notifications_dict = predictTrand(inn)
         context = {
             'segment': 'analysis',
             'profile': profile,
-            'trend_prediction': purchases_list
+            'trend_prediction': purchases_list,
+            'months': months
         }
 
-    notifications = getNotifications(purchases_list, is_supplier)
+    notifications = getNotifications(notifications_dict, is_supplier)
 
     context.update(getCategoriesStats(user_id, is_supplier, inn))
 

@@ -10,16 +10,20 @@ from ml.controller import *
 auctions = None
 products = None
 
-# print("Parsing auctions.xlsx")
-# auctions = pd.read_excel("datasets/auctions.xlsx", sheet_name="Запрос1", converters={'ИНН заказчика': str, 'ИНН поставщика': str})
-# print("Parsing done")
-# print("Parsing products.xlsx")
-# products = pd.read_excel("datasets/products.xlsx", sheet_name="Запрос1")
-# print("Parsing done")
-#
-# print("Preloading")
-# Preloaded().load_everything(auctions, products)
-# print("Preloading done")
+print("Parsing auctions.xlsx")
+auctions = pd.read_excel("datasets/auctions.xlsx", sheet_name="Запрос1", converters={'ИНН заказчика': str, 'ИНН поставщика': str})
+print("Parsing done")
+print("Parsing products.xlsx")
+products = pd.read_excel("datasets/products.xlsx", sheet_name="Запрос1")
+print("Parsing done")
+
+print("Preloading")
+Preloaded().load_everything(auctions, products)
+print("Preloading done")
+
+json_file = open("datasets/data.json")
+dataset = json.load(json_file)
+
 
 
 with open('datasets/id_to_inn.txt', ) as f:
@@ -282,7 +286,14 @@ def _predictPurchases(inn, df):
     product_dict = periods_info(inn, df)
 
     today = datetime.date.today()
-    product_dict = sorted(product_dict.items(), key=lambda k: k[-1])
+    product_dict_clear = {}
+    print(product_dict)
+    for key in product_dict.keys():
+        if product_dict[key][-1] is not None:
+            product_dict_clear[key] = product_dict[key]
+
+    print(product_dict_clear)
+    product_dict = sorted(product_dict_clear.items(), key=lambda k: k[-1])
     product_dict_clear = {}
     for item in product_dict:
         if item[1][-1] >= today:
@@ -313,9 +324,10 @@ def getNotifications(predictions, is_supplier):
         title = 'Подготовьтесь к продажам с {DATE}'
 
     notifications = []
-    period = 7
+    period = 7 if not is_supplier else 30
     now = datetime.datetime.now()
-    for item in predictions:
+    for item in list(predictions):
+        print(item)
         try:
             date = datetime.datetime.strptime(str(item['date']), datetime_predict_format)
         except:
@@ -337,14 +349,57 @@ def getNotifications(predictions, is_supplier):
 
 
 def predictTrand(inn):
-    result_list = [
-        {
-            'name': 'Название категории',
-            'quantity': 100,
-            'sum': 100500,
-            'trend': 32.8,
-            'date': '21.10.2002',
-        }
-    ]
 
-    return result_list
+    colors = ["#cb0c9f", "#3A416F", "#17c1e8", "#F6AE2D", "#F26419"]
+    date = ((datetime.datetime.today().replace(day=1) + datetime.timedelta(days=32)).replace(day=1)).strftime(datetime_predict_format)
+
+    df1 = auctions.drop(['КПП поставщика'], axis=1)
+    df1 = df1[df1.isna().any(axis=1)]
+    clean_data = auctions.drop(df1.isna().any(axis=1).index)
+
+    # user_orders = clean_data
+    user_orders = clean_data.loc[clean_data['ИНН заказчика'] == inn]
+
+    id_buy_dates = {}
+    for index, data in user_orders.loc[:, ['СТЕ', 'Дата публикации КС на ПП']].iterrows():
+        ctes_raw = data['СТЕ']
+        publication_date_raw = data['Дата публикации КС на ПП']
+
+        ctes = json.loads(ctes_raw)
+        publication_date = publication_date_raw.date()
+        for item in ctes:
+            item_id = item['Id']
+            item_quantity = item['Quantity']
+            if item_id is None:
+                continue
+            item_category = IdToCategory().convert(item_id, auctions)
+            if item_category not in id_buy_dates.keys():
+                id_buy_dates[item_category] = []
+            id_buy_dates[item_category].append((publication_date, item_quantity, item_id))
+
+    output = predict_categories_trend(dataset, list(id_buy_dates.keys()))
+
+    result_list = []
+    notifications_dict = []
+    for i in range(len(output)):
+        notifications_dict.append(
+            {
+                'date': date,
+                'name': output[i]['name']
+            }
+        )
+        result_list.append(
+            {
+                'label': f"{output[i]['name']} {output[i]['percentage']}",
+                'tension': 0.4,
+                'pointRadius': 2,
+                'pointBackgroundColor': colors[i],
+                'borderColor': colors[i],
+                'borderWidth': 3,
+                # 'backgroundColor': gradientStroke1,
+                'data': output[i]['data'],
+                'maxBarThickness': 6,
+            },
+        )
+
+    return result_list, notifications_dict
