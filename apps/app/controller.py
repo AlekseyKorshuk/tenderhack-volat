@@ -1,20 +1,33 @@
-from dateutil.relativedelta import relativedelta
+from dateutil.relativedelta import relativedelta as reldelta
 import datetime
 from apps.app.models import Auctions
 import pandas as pd
 import requests
 import json
 import time
+from ml.controller import *
 
 auctions = None
 products = None
+
+# print("Parsing auctions.xlsx")
+# auctions = pd.read_excel("datasets/auctions.xlsx", sheet_name="Запрос1", converters={'ИНН заказчика': str, 'ИНН поставщика': str})
+# print("Parsing done")
+# print("Parsing products.xlsx")
+# products = pd.read_excel("datasets/products.xlsx", sheet_name="Запрос1")
+# print("Parsing done")
+#
+# print("Preloading")
+# Preloaded().load_everything(auctions, products)
+# print("Preloading done")
 
 
 with open('datasets/id_to_inn.txt', ) as f:
     id_to_inn = json.load(f)
 
-datetime_format = "%d.%m.%Y %H:%M:%S"
-
+datetime_format = "%Y-%m-%d %H:%M:%S.%f"
+datetime_format_api = "%d.%m.%Y %H:%M:%S"
+datetime_predict_format = "%d.%m.%Y"
 
 
 def get_purchase_stats(profile):
@@ -57,9 +70,9 @@ def get_purchase_stats(profile):
 
     for purchase in profile['items']:
         if purchase['beginDate']:
-            date = datetime.datetime.strptime(purchase['beginDate'], datetime_format)
+            date = datetime.datetime.strptime(purchase['beginDate'], datetime_format_api)
 
-            if now - relativedelta(months=12, days=now.day, hours=now.hour, minutes=now.minute,
+            if now - reldelta(months=12, days=now.day, hours=now.hour, minutes=now.minute,
                                    seconds=now.second) <= date <= now:
                 purchase_stats[date.month]['count'] += 1
                 if 'auctionCurrentPrice' in purchase and purchase['auctionCurrentPrice']:
@@ -69,6 +82,59 @@ def get_purchase_stats(profile):
             if purchase['stateName'] == 'Активная':
                 active['count'] += 1
                 active['price'] += purchase['startPrice']
+
+    active['price_display'] = f"{int(active['price']):,}".replace(',', ' ')
+    return months, purchase_stats, int(total_spent), active
+
+
+def get_contract_stats(profile):
+    now = datetime.datetime.now()
+
+    months_dict = {
+        9: "Сентябрь",
+        10: "Октябрь",
+        11: "Ноябрь",
+        12: "Декабрь",
+        1: "Январь",
+        2: "Февраль",
+        3: "Март",
+        4: "Апрель",
+        5: "Май",
+        6: "Июнь",
+        7: "Июль",
+        8: "Август",
+    }
+
+    months = []
+    purchase_stats = {}
+    for i in range(now.month - 1, now.month - 13, -1):
+        months.append(
+            months_dict[i % 12 + 1]
+        )
+        purchase_stats[i % 12 + 1] = {
+            'count': 0,
+            'price': 0.0,
+        }
+
+    months.reverse()
+    total_spent = 0
+    active = {
+        'count': 0,
+        'price': 0,
+        'price_display': ""
+    }
+
+    for purchase in profile['items']:
+        if purchase['conclusionDate']:
+            date = datetime.datetime.strptime(purchase['conclusionDate'], datetime_format_api)
+            if now - reldelta(months=12, days=now.day, hours=now.hour, minutes=now.minute,
+                                   seconds=now.second) <= date <= now:
+                purchase_stats[date.month]['count'] += 1
+                purchase_stats[date.month]['price'] += purchase['rubSum']
+                total_spent += purchase['rubSum']
+            if purchase['state']['name'] == 'Заключен':
+                active['count'] += 1
+                active['price'] += purchase['rubSum']
 
     active['price_display'] = f"{int(active['price']):,}".replace(',', ' ')
     return months, purchase_stats, int(total_spent), active
@@ -85,28 +151,45 @@ def get_profiles_list():
 def getProductByID(id):
     product = requests.get(
         f'https://old.zakupki.mos.ru/api/Cssp/Sku/GetEntity?id={str(id)}'
-    ).json()
-    image = 'https://zakupki.mos.ru/cms/Media/CompanyProfile/Images/logo_dummy.svg'
-    if len(product['images']) != 0:
-        image = f'https://zakupki.mos.ru/newapi/api/Core/Thumbnail/{product["images"][0]["fileStorage"]["id"]}/140/140'
-    product_dict = {
-        'id': str(id),
-        'name': str(product['name']),
-        'category': str(product['productionDirectoryName']),
-        'minPrice': str(product['minPrice']) if product['minPrice'] is not None else "-",
-        'maxPrice': str(product['maxPrice']) if product['maxPrice'] is not None else "-",
-        'image': image
-    }
+    )
+    try:
+        product = product.json()
+        image = 'https://zakupki.mos.ru/cms/Media/CompanyProfile/Images/logo_dummy.svg'
+        if len(product['images']) != 0:
+            if product["images"][0]["fileStorage"]["id"] > 0:
+                image = f'https://zakupki.mos.ru/newapi/api/Core/Thumbnail/{product["images"][0]["fileStorage"]["id"]}/140/140'
+        product_dict = {
+            'id': str(id),
+            'name': str(product['name']),
+            'category': str(product['productionDirectoryName']),
+            'minPrice': str(product['minPrice']) if product['minPrice'] is not None else "-",
+            'maxPrice': str(product['maxPrice']) if product['maxPrice'] is not None else "-",
+            'image': image
+        }
+    except:
+        product = None
+        for index, row in (products.loc[products['ID СТЕ'] == int(id)]).iterrows():
+            product = row
+        product_dict = {
+            'id': str(id),
+            'name': product['Название СТЕ'],
+            'category': product['Категория'],
+            'minPrice': '-',
+            'maxPrice': '-',
+            'image': 'https://zakupki.mos.ru/cms/Media/CompanyProfile/Images/logo_dummy.svg'
+        }
+
     time.sleep(0.1)
     return product_dict
 
 
-def getINNByID(id):
-    return id_to_inn[str(id)]
+def getINNByProfile(profile):
+    return str(profile['company']['inn'])
 
 
-def getCategoriesStats(id):
-    user_auctions = auctions.loc[auctions['ИНН заказчика'] == int(getINNByID(id))]
+def getCategoriesStats(id, is_supplier, inn):
+    print('ИНН заказчика' if not is_supplier else 'ИНН поставщика')
+    user_auctions = auctions.loc[auctions['ИНН заказчика' if not is_supplier else 'ИНН поставщика'] == str(inn)]
     products_dict = {}
     for index, row in user_auctions.iterrows():
         products_list = row['СТЕ']
@@ -171,47 +254,41 @@ def predictSuggestions(inn):
 
 
 def _predictSuggestions(inn, df):
-    product_list = [1153130, 34879568, 19216453, 34751624]
-
+    product_list = items_user_did_not_try(str(inn), auctions, products)
+    print(product_list)
     return product_list
 
 
+
 def predictPurchases(inn):
-    product_list = _predictPurchases(inn, auctions)
+    product_dict = _predictPurchases(str(inn), auctions)
+
     result_list = []
 
-    for item in product_list:
+    for key in product_dict.keys():
+        cat_period, demiseason_len, season_quantity, current_quantity, \
+        last_buy, last_item, is_enough, next_buy = product_dict[key]
         temp_dict = {
-            'date': item['date']
+            'period': cat_period,
+            'date': datetime.datetime(next_buy.year, next_buy.month, next_buy.day).strftime("%d.%m.%Y"),
         }
-        temp_dict.update(getProductByID(item['id']))
+        temp_dict.update(getProductByID(last_item))
         result_list.append(temp_dict)
 
     return result_list
 
 
 def _predictPurchases(inn, df):
+    product_dict = periods_info(inn, df)
 
-    product_list = [
-        {
-            'id': 1153130,
-            'date': "21.10.2021"
-        },
-        {
-            'id': 18448990,
-            'date': "21.10.2021"
-        },
-        {
-            'id': 34879568,
-            'date': "21.10.2021"
-        },
-        {
-            'id': 19216453,
-            'date': "21.10.2021"
-        },
-    ]
+    today = datetime.date.today()
+    product_dict = sorted(product_dict.items(), key=lambda k: k[-1])
+    product_dict_clear = {}
+    for item in product_dict:
+        if item[1][-1] >= today:
+            product_dict_clear[item[0]] = item[1]
 
-    return product_list
+    return product_dict_clear
 
 
 def start():
@@ -222,9 +299,52 @@ def start():
         auctions = pd.read_excel("datasets/auctions.xlsx", sheet_name="Запрос1")
         print("Parsing done")
 
-    if products is None:
-        print("Parsing products.xlsx")
-        products = pd.read_excel("datasets/products.xlsx", sheet_name="Запрос1")
-        print("Parsing done")
+    # if products is None:
+    #     print("Parsing products.xlsx")
+    #     products = pd.read_excel("datasets/products.xlsx", sheet_name="Запрос1")
+    #     print("Parsing done")
 
 
+def getNotifications(predictions, is_supplier):
+
+    if not is_supplier:
+        title = 'Запланируйте закупку на {DATE}'
+    else:
+        title = 'Подготовьтесь к продажам с {DATE}'
+
+    notifications = []
+    period = 7
+    now = datetime.datetime.now()
+    for item in predictions:
+        try:
+            date = datetime.datetime.strptime(str(item['date']), datetime_predict_format)
+        except:
+            date = datetime.datetime.strptime(str(item['date']), '%Y-%m-%d')
+        delta = (date - now).days
+        if delta <= period:
+            notifications.append(
+                {
+                    'title': title.format(DATE=item["date"]),
+                    'name': item['name'],
+                    'date': item['date'],
+                    'delta': period - delta
+                }
+            )
+
+    notifications = sorted(notifications, key=lambda k: k['delta'])
+    notifications = notifications[:min(len(notifications), 4)]
+    return notifications
+
+
+def predictTrand(inn):
+    result_list = [
+        {
+            'name': 'Название категории',
+            'quantity': 100,
+            'sum': 100500,
+            'trend': 32.8,
+            'date': '21.10.2002',
+        }
+    ]
+
+    return result_list

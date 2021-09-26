@@ -37,19 +37,15 @@
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
           <div class="card">
             <div class="card-body p-3">
               <div class="row">
                 <div class="col-7">
                   <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Потрачено</p>
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Доход</p>
                     <h5 class="font-weight-bolder">{{total_spent}} ₽</h5>
-                    {% if spent_last_month >= 0 %}
-                      <span class="text-success text-sm font-weight-bolder">+ {{spent_last_month_display}} ₽</span>
-                    {% else %}
-                      <span class="text-warning text-sm font-weight-bolder">- {{spent_last_month|abs}} ₽</span>
-                    {% endif %}
+                    <span class="text-success text-sm font-weight-bolder">+ {{spent_last_month_display}} ₽</span>
                     <span class="text-sm"></span>
                   </div>
                 </div>
@@ -62,37 +58,13 @@
             </div>
           </div>
         </div>
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4" onclick="location.href='/tables/{{profile.company.id}}';" style="cursor: pointer;">
           <div class="card">
             <div class="card-body p-3">
               <div class="row">
                 <div class="col-7">
                   <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Сэкономлено<br> </p>
-                    <h5 class="font-weight-bolder">{{saved_last_month_display}} ₽</h5>
-                    {% if saved_price >= 0 %}
-                      <span class="text-success text-sm font-weight-bolder">+ {{saved_price_display}} ₽</span>
-                    {% else %}
-                      <span class="text-warning text-sm font-weight-bolder">- {{saved_price_display}} ₽</span>
-                    {% endif %}
-                  </div>
-                </div>
-                <div class="col-5 text-end my-auto">
-                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                    <i class="ni ni-credit-card text-lg opacity-10" aria-hidden="true"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4" onclick="location.href='/tables/{{profile.company.id}}';" style="cursor: pointer;">
-          <div class="card">
-            <div class="card-body p-3">
-              <div class="row">
-                <div class="col-7">
-                  <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Активные закупки</p>
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Ожидают исполнения</p>
                     <h5 class="font-weight-bolder">{{purchases_active.count}}</h5>
                     На
                     <span class="text-success text-sm font-weight-bolder">{{purchases_active.price_display}} ₽</span>
@@ -108,13 +80,13 @@
             </div>
           </div>
         </div>
-        <div class="col-xl-3 col-sm-6" onclick="location.href='/tables/{{profile.company.id}}';" style="cursor: pointer;">
+        <div class="col-xl-4 col-sm-6" onclick="location.href='/tables/{{profile.company.id}}';" style="cursor: pointer;">
           <div class="card">
             <div class="card-body p-3">
               <div class="row">
                 <div class="col-7">
                   <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Закупок</p>
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Контрактов</p>
                     <h5 class="font-weight-bolder">{{total_purchases}}</h5>
                     <span class="text-success text-sm font-weight-bolder">+ {{purchases_last_month}}</span>
                     <span class="text-sm">за месяц</span>
@@ -186,7 +158,7 @@
             <div class="card-header pb-0">
               <div class="row">
                 <div class="col-lg-6 col-7">
-                  <h6>Последние 5 закупок</h6>
+                  <h6>Последние 5 контрактов</h6>
                   <p class="text-sm mb-0">
                     <i class="fa fa-check text-info" aria-hidden="true"></i>
                     <span class="font-weight-bold ms-1">{{purchases_last_month}}</span> за этот месяц
@@ -207,9 +179,7 @@
                   <thead>
                     <tr>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Название</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Предложений</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Бюджет</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Текущая цена</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Сумма котракта</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Статус</th>
                     </tr>
                   </thead>
@@ -220,35 +190,21 @@
                               <a href="https://zakupki.mos.ru/auction/{{item.auctionId}}">
                                 <div class="d-flex px-2 py-1" >
                                   <div class="d-flex flex-column justify-content-center">
-                                    <h6 class="mb-0 text-sm" style="width: 300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ item.name }}</h6>
+                                    <h6 class="mb-0 text-sm" style="width: 600px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ item.subject }}</h6>
                                   </div>
                                 </div>
                               </a>
                           </td>
-                          <td class="align-middle text-center">
-                            {% if item.offerCount %}
-                              <span class="text-xs font-weight-bold"> {{ item.offerCount }} </span>
-                            {% else %}
-                              <span class="text-xs font-weight-bold"> - </span>
-                            {% endif %}
-                          </td>
                           <td class="align-middle text-center text-sm">
-                            <span class="text-xs font-weight-bold"> {{ item.startPrice }}  ₽</span>
-                          </td>
-                          <td class="align-middle text-center text-sm">
-                            {% if item.auctionCurrentPrice %}
-                              <span class="text-xs font-weight-bold"> {{ item.auctionCurrentPrice }}  ₽</span>
-                            {% else %}
-                              <span class="text-xs font-weight-bold"> - </span>
-                            {% endif %}
+                            <span class="text-xs font-weight-bold"> {{ item.rubSum }}  ₽</span>
                           </td>
                           <td class="align-middle text-center">
-                            {% if item.stateName == 'Активная' %}
-                              <h6><span class="badge bg-gradient-secondary text-xxs">Активная</span></h6>
-                            {% elif item.stateName == 'Не состоялась'%}
-                              <h6><span class="badge bg-gradient-danger text-xxs">Не состоялась</span></h6>
+                            {% if item.state.name == 'Заключен' %}
+                              <h6><span class="badge bg-gradient-secondary text-xxs">Заключен</span></h6>
+                            {% elif item.state.name == 'Исполнен'%}
+                              <h6><span class="badge bg-gradient-success text-xxs">Исполнен</span></h6>
                             {% else %}
-                              <h6><span class="badge bg-gradient-success text-xxs">Проведена</span></h6>
+                              <h6><span class="badge bg-gradient-danger text-xxs">Не заключен</span></h6>
                             {% endif %}
                           </td>
                           </td>
@@ -258,7 +214,7 @@
                 </table>
               </div>
               <div class="card-body text-center">
-                  <button class="btn bg-gradient-primary mb-0" onclick="location.href='/tables/{{profile.company.id}}';" style="cursor: pointer;">Все закупки</button>
+                  <button class="btn bg-gradient-primary mb-0" onclick="location.href='/tables/{{profile.company.id}}';" style="cursor: pointer;">Все контракты</button>
                 </div>
             </div>
           </div>
@@ -287,7 +243,7 @@
       data: {
         labels: {{ months|safe }},
         datasets: [{
-          label: "Закупок",
+          label: "Контрактов",
           tension: 0.4,
           borderWidth: 0,
           pointRadius: 0,
@@ -366,19 +322,7 @@
             backgroundColor: gradientStroke1,
             data: {{ purchase_stats_start_price }},
             maxBarThickness: 6
-          },
-          {
-            label: "Конечная цена",
-            tension: 0.4,
-            borderWidth: 0,
-            pointRadius: 0,
-            borderColor: "#3A416F",
-            borderWidth: 3,
-            backgroundColor: gradientStroke2,
-            data: {{ purchase_stats_end_price }},
-            maxBarThickness: 6
-
-          },
+          }
         ],
       },
       options: {

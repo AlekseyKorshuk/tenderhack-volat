@@ -8,6 +8,7 @@ from decouple import config
 from unipath import Path
 import django_heroku
 import mimetypes
+mimetypes.add_type("text/css", ".css", True)
 mimetypes.add_type("text/html", ".css", True)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -149,4 +150,4 @@ STATICFILES_DIRS = (
 #############################################################
 
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())

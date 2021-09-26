@@ -19,7 +19,7 @@ from django.db import models
 import random
 from django.shortcuts import redirect
 import datetime
-
+from numpy import median
 
 
 
@@ -68,103 +68,190 @@ def profile(request, *args, **kwargs):
     user_id = kwargs.get('user_id')
     if user_id is None:
         user_id = random.choice(get_profiles_list())
-    profile = get_profile(user_id)
-    achievements_list = get_achievements(user_id)
 
-    achievements = {
-        'SignedDocument': {
-            'items': [],
-            'unlocked': False
-        },
-        'SignedDocumentOne': {
-            'items': [],
-            'unlocked': False
-        },
-        'SignedDocumentTen': {
-            'items': [],
-            'unlocked': False
-        },
-        'SignedDocumentHundred': {
-            'items': [],
-            'unlocked': False
-        },
-        'Rocket': {
-            'items': [],
-            'unlocked': False
-        },
-        'Flag': {
-            'items': [],
-            'unlocked': False
-        },
-    }
+    profile, is_supplier, result_user_id = get_profile(user_id)
+    inn = getINNByProfile(profile)
 
-    for achievement in achievements_list:
-        if achievement['unlocked']:
+    if not is_supplier:
+        purchases_list = predictPurchases(inn)
+
+        months, purchase_stats, total_spent, active = get_purchase_stats(profile)
+
+        achievements_list = get_achievements(user_id)
+
+        achievements = {
+            'SignedDocument': {
+                'items': [],
+                'unlocked': False
+            },
+            'SignedDocumentOne': {
+                'items': [],
+                'unlocked': False
+            },
+            'SignedDocumentTen': {
+                'items': [],
+                'unlocked': False
+            },
+            'SignedDocumentHundred': {
+                'items': [],
+                'unlocked': False
+            },
+            'Rocket': {
+                'items': [],
+                'unlocked': False
+            },
+            'Flag': {
+                'items': [],
+                'unlocked': False
+            },
+        }
+
+        for achievement in achievements_list:
             achievements[
                 achievement['iconName']
             ]['items'].append(achievement['displayName'])
+            if achievement['unlocked']:
+                achievements[
+                    achievement['iconName']
+                ]['unlocked'] = True
+
+        html_template = loader.get_template('index.html')
+        purchase_stats_count = [purchase_stats[key]['count'] for key in purchase_stats.keys()]
+        purchase_stats_start_price = [int(purchase_stats[key]['start_price']) for key in purchase_stats.keys()]
+        purchase_stats_end_price = [int(purchase_stats[key]['end_price']) for key in purchase_stats.keys()]
+
+        try:
+            delta_now = purchase_stats_start_price[-1] / purchase_stats_end_price[-1] * 100
+        except:
+            delta_now = purchase_stats_start_price[-1] * 100
+
+        try:
+            delta_before = purchase_stats_start_price[-2] / purchase_stats_end_price[-2] * 100
+        except:
+            delta_before = purchase_stats_start_price[-2] * 100
+
+        if delta_now >= delta_before:
+            try:
+                start_end_price_difference = int(delta_now / delta_before)
+            except:
+                start_end_price_difference = 0
+        else:
+            try:
+                start_end_price_difference = -1 * int(delta_now / delta_before)
+            except:
+                start_end_price_difference = 0
+
+        for i in range(len(profile['items'])):
+            profile['items'][i]['startPrice'] = f"{int(profile['items'][i]['startPrice']):,}".replace(',', ' ')
+            if profile['items'][i]['auctionCurrentPrice']:
+                profile['items'][i][
+                    'auctionCurrentPrice'] = f"{int(profile['items'][i]['auctionCurrentPrice']):,}".replace(',', ' ')
+
+
+        # f"{value:,}".replace(',', ' ')
+        context = {
+            'segment': 'index',
+            'profile': profile,
+            'purchase_stats_count': purchase_stats_count,
+            'months': months,
+            'purchase_stats_count_max': max(purchase_stats_count),
+            'purchase_stats_start_price': purchase_stats_start_price,
+            'purchase_stats_end_price': purchase_stats_end_price,
+            'start_end_price_difference': start_end_price_difference,
+            'saved_last_month': int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]),
+            'saved_last_month_display': f"{int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]):,}".replace(
+                ',', ' '),
+            'spent_last_month': int(purchase_stats_end_price[-1]),
+            'spent_last_month_display': f"{purchase_stats_end_price[-1]:,}".replace(',', ' '),
+            'total_purchases': f"{len(profile['items']):,}".replace(',', ' '),
+            'purchases_last_month': f"{purchase_stats_count[-1]:,}".replace(',', ' '),
+            'total_spent': f"{total_spent:,}".replace(',', ' '),
+            'purchases_active': active,
+            'saved_price': int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]) - int(
+                purchase_stats_start_price[-2] - purchase_stats_end_price[-2]),
+            'saved_price_display': f"{abs(int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]) - int(purchase_stats_start_price[-2] - purchase_stats_end_price[-2])):,}".replace(
+                ',', ' '),
+            'spent_price': f"{int(purchase_stats_start_price[-1] - purchase_stats_start_price[-2]):,}".replace(',',
+                                                                                                               ' '),
+            'purchases_display': profile['items'][:min(len(profile['items']), 5)],
+            'achievements': achievements
+        }
+    else:
+        purchases_list = predictTrand(inn)
+        months, purchase_stats, total_spent, active = get_contract_stats(profile)
+
+        html_template = loader.get_template('supplier.html')
+
+        achievements_list = get_achievements(user_id)
+
+        achievements = {
+            'SignedDocument': {
+                'items': [],
+                'unlocked': False
+            },
+            'SignedDocumentOne': {
+                'items': [],
+                'unlocked': False
+            },
+            'SignedDocumentTen': {
+                'items': [],
+                'unlocked': False
+            },
+            'SignedDocumentHundred': {
+                'items': [],
+                'unlocked': False
+            },
+            'Rocket': {
+                'items': [],
+                'unlocked': False
+            },
+            'Flag': {
+                'items': [],
+                'unlocked': False
+            },
+        }
+
+        for achievement in achievements_list:
             achievements[
                 achievement['iconName']
-            ]['unlocked'] = True
+            ]['items'].append(achievement['displayName'])
+            if achievement['unlocked']:
 
-    html_template = loader.get_template('index.html')
+                achievements[
+                    achievement['iconName']
+                ]['unlocked'] = True
 
-    months, purchase_stats, total_spent, active = get_purchase_stats(profile)
+        purchase_stats_count = [purchase_stats[key]['count'] for key in purchase_stats.keys()]
+        purchase_stats_start_price = [int(purchase_stats[key]['price']) for key in purchase_stats.keys()]
 
-    purchase_stats_count = [purchase_stats[key]['count'] for key in purchase_stats.keys()]
-    purchase_stats_start_price = [int(purchase_stats[key]['start_price']) for key in purchase_stats.keys()]
-    purchase_stats_end_price = [int(purchase_stats[key]['end_price']) for key in purchase_stats.keys()]
+        for i in range(len(profile['items'])):
+            profile['items'][i]['rubSum'] = f"{int(profile['items'][i]['rubSum']):,}".replace(',', ' ')
 
-    try:
-        delta_now = purchase_stats_start_price[-1] / purchase_stats_end_price[-1] * 100
-    except:
-        delta_now = purchase_stats_start_price[-1] * 100
 
-    try:
-        delta_before = purchase_stats_start_price[-2] / purchase_stats_end_price[-2] * 100
-    except:
-        delta_before = purchase_stats_start_price[-2] * 100
+        context = {
+            'segment': 'index',
+            'profile': profile,
+            'purchase_stats_count': purchase_stats_count,
+            'months': months,
+            'purchase_stats_count_max': max(purchase_stats_count),
+            'purchase_stats_start_price': purchase_stats_start_price,
+            'purchases_active': active,
+            'total_purchases': f"{len(profile['items']):,}".replace(',', ' '),
+            'purchases_last_month': f"{purchase_stats_count[-1]:,}".replace(',', ' '),
+            'total_spent': f"{total_spent:,}".replace(',', ' '),
+            'spent_price': f"{int(purchase_stats_start_price[-1] - purchase_stats_start_price[-2]):,}".replace(',',
+                                                                                                               ' '),
+            'spent_last_month_display': f"{purchase_stats_start_price[-1]:,}".replace(',', ' '),
+            'purchases_display': profile['items'][:min(len(profile['items']), 5)],
+            'achievements': achievements
+        }
 
-    if delta_now >= delta_before:
-        try:
-            start_end_price_difference = int(delta_now / delta_before)
-        except:
-            start_end_price_difference = 0
-    else:
-        try:
-            start_end_price_difference = -1 * int(delta_now / delta_before)
-        except:
-            start_end_price_difference = 0
-
-    for i in range(len(profile['items'])):
-        profile['items'][i]['startPrice'] = f"{int(profile['items'][i]['startPrice']):,}".replace(',', ' ')
-        if profile['items'][i]['auctionCurrentPrice']:
-            profile['items'][i]['auctionCurrentPrice'] = f"{int(profile['items'][i]['auctionCurrentPrice']):,}".replace(',', ' ')
-
-    # f"{value:,}".replace(',', ' ')
-    context = {
-        'segment': 'index',
-        'profile': profile,
-        'purchase_stats_count': purchase_stats_count,
-        'months': months,
-        'purchase_stats_count_max': max(purchase_stats_count),
-        'purchase_stats_start_price': purchase_stats_start_price,
-        'purchase_stats_end_price': purchase_stats_end_price,
-        'start_end_price_difference': start_end_price_difference,
-        'saved_last_month': int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]),
-        'saved_last_month_display': f"{int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]):,}".replace(',', ' '),
-        'spent_last_month': int(purchase_stats_end_price[-1]),
-        'spent_last_month_display': f"{purchase_stats_end_price[-1]:,}".replace(',', ' '),
-        'total_purchases': f"{len(profile['items']):,}".replace(',', ' '),
-        'purchases_last_month': f"{purchase_stats_count[-1]:,}".replace(',', ' '),
-        'total_spent': f"{total_spent:,}".replace(',', ' '),
-        'purchases_active': active,
-        'saved_price': int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]) - int(purchase_stats_start_price[-2] - purchase_stats_end_price[-2]),
-        'saved_price_display': f"{abs(int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]) - int(purchase_stats_start_price[-2] - purchase_stats_end_price[-2])):,}".replace(',', ' '),
-        'spent_price': f"{int(purchase_stats_start_price[-1] - purchase_stats_start_price[-2]):,}".replace(',', ' '),
-        'purchases_display': profile['items'][:min(len(profile['items']), 5)],
-        'achievements': achievements
-    }
+    notifications = getNotifications(purchases_list, is_supplier)
+    context.update(
+        {
+            'notifications': notifications
+        }
+    )
 
     return HttpResponse(html_template.render(context, request))
 
@@ -176,38 +263,30 @@ def tables(request, *args, **kwargs):
     if user_id is None:
         user_id = random.choice(get_profiles_list())
 
-    profile = get_profile(user_id)
+    profile, is_supplier, result_user_id = get_profile(user_id)
+    inn = getINNByProfile(profile)
 
-    html_template = loader.get_template('tables.html')
+    if not is_supplier:
+        html_template = loader.get_template('tables.html')
+        months, purchase_stats, total_spent, active = get_purchase_stats(profile)
+        purchase_stats_count = [purchase_stats[key]['count'] for key in purchase_stats.keys()]
+        for i in range(len(profile['items'])):
+            profile['items'][i]['startPrice'] = f"{int(profile['items'][i]['startPrice']):,}".replace(',', ' ')
+            if profile['items'][i]['auctionCurrentPrice']:
+                profile['items'][i][
+                    'auctionCurrentPrice'] = f"{int(profile['items'][i]['auctionCurrentPrice']):,}".replace(',', ' ')
 
-    months, purchase_stats, total_spent, active = get_purchase_stats(profile)
-
-    purchase_stats_count = [purchase_stats[key]['count'] for key in purchase_stats.keys()]
-    purchase_stats_start_price = [int(purchase_stats[key]['start_price']) for key in purchase_stats.keys()]
-    purchase_stats_end_price = [int(purchase_stats[key]['end_price']) for key in purchase_stats.keys()]
-
-    try:
-        delta_now = purchase_stats_start_price[-1] / purchase_stats_end_price[-1] * 100
-    except:
-        delta_now = purchase_stats_start_price[-1] * 100
-
-    try:
-        delta_before = purchase_stats_start_price[-2] / purchase_stats_end_price[-2] * 100
-    except:
-        delta_before = purchase_stats_start_price[-2] * 100
-
-    if delta_now >= delta_before:
-        try:
-            start_end_price_difference = int(delta_now / delta_before)
-        except:
-            start_end_price_difference = 0
+        purchases_list = predictPurchases(inn)
     else:
-        try:
-            start_end_price_difference = -1 * int(delta_now / delta_before)
-        except:
-            start_end_price_difference = 0
+        html_template = loader.get_template('tables-supplier.html')
+        months, purchase_stats, total_spent, active = get_contract_stats(profile)
+        purchase_stats_count = [purchase_stats[key]['count'] for key in purchase_stats.keys()]
+        for i in range(len(profile['items'])):
+            profile['items'][i]['rubSum'] = f"{int(profile['items'][i]['rubSum']):,}".replace(',', ' ')
+        purchases_list = predictTrand(inn)
 
     paginator = Paginator(profile['items'], 8)
+
     try:
         purchases = paginator.page(page)
     except PageNotAnInteger:
@@ -215,30 +294,19 @@ def tables(request, *args, **kwargs):
     except EmptyPage:
         purchases = paginator.page(paginator.num_pages)
 
-    for i in range(len(profile['items'])):
-        profile['items'][i]['startPrice'] = f"{int(profile['items'][i]['startPrice']):,}".replace(',', ' ')
-        if profile['items'][i]['auctionCurrentPrice']:
-            profile['items'][i]['auctionCurrentPrice'] = f"{int(profile['items'][i]['auctionCurrentPrice']):,}".replace(',', ' ')
-
     context = {
         'segment': 'tables',
         'profile': profile,
-        'purchase_stats_count': purchase_stats_count,
-        'months': months,
-        'purchase_stats_count_max': max(purchase_stats_count),
-        'purchase_stats_start_price': purchase_stats_start_price,
-        'purchase_stats_end_price': purchase_stats_end_price,
-        'start_end_price_difference': start_end_price_difference,
-        'saved_last_month': int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]),
-        'spent_last_month': int(purchase_stats_end_price[-1]),
-        'total_purchases': len(profile['items']),
-        'purchases_last_month': purchase_stats_count[-1],
-        'total_spent': total_spent,
-        'purchases_active': active,
-        'saved_price': int(purchase_stats_start_price[-1] - purchase_stats_end_price[-1]) - int(purchase_stats_start_price[-2] - purchase_stats_end_price[-2]),
-        'spent_price': int(purchase_stats_start_price[-1] - purchase_stats_start_price[-2]),
-        'purchases_display': purchases
+        'purchases_display': purchases,
+        'purchases_last_month': f"{purchase_stats_count[-1]:,}".replace(',', ' '),
     }
+
+    notifications = getNotifications(purchases_list, is_supplier)
+    context.update(
+        {
+            'notifications': notifications
+        }
+    )
 
     return HttpResponse(html_template.render(context, request))
 
@@ -293,26 +361,58 @@ class PostJsonListView(View):
 
 def analysis(request, *args, **kwargs):
 
-
     user_id = kwargs.get('user_id')
     if user_id is None:
         user_id = random.choice(get_profiles_list())
-    html_template = loader.get_template('analysis.html')
-    inn = getINNByID(user_id)
-    profile = {
-            'company': {
-                'id': user_id
-            }
+
+    profile, is_supplier, result_user_id = get_profile(user_id)
+    inn = getINNByProfile(profile)
+
+    if not is_supplier:
+        html_template = loader.get_template('analysis.html')
+        purchases_list = predictPurchases(inn)
+
+
+        # for i in range(len(purchases_list)):
+        #     product_id = purchases_list[i]['id']
+        #     print(product_id)
+        #     prices = []
+        #     data = auctions.loc[auctions['ИНН заказчика'] == str(inn)]
+        #     for index, row in data.iterrows():
+        #         for item in json.loads(row['СТЕ']):
+        #             if item['Id'] == product_id:
+        #                 prices.append(
+        #                     float(item["Amount"] / item["Quantity"])
+        #                 )
+        #     print(prices)
+        #
+        #     purchases_list[i]['deltaPrice'] = float(median(prices)) - float(purchases_list[i]['minPrice'])
+
+        context = {
+            'segment': 'analysis',
+            'profile': profile,
+            'products_suggest': predictSuggestions(inn), #predictSuggestions(inn)
+            'purchases_list': purchases_list,
         }
 
-    context = {
-        'segment': 'analysis',
-        'profile': profile,
-        'products_suggest': predictSuggestions(inn),
-        'purchases_list': predictPurchases(inn)
-    }
+    else:
+        html_template = loader.get_template('analysis-supplier.html')
+        purchases_list = predictTrand(inn)
+        context = {
+            'segment': 'analysis',
+            'profile': profile,
+            'trend_prediction': purchases_list
+        }
 
-    context.update(getCategoriesStats(user_id))
+    notifications = getNotifications(purchases_list, is_supplier)
+
+    context.update(getCategoriesStats(user_id, is_supplier, inn))
+
+    context.update(
+        {
+            'notifications': notifications
+        }
+    )
 
     return HttpResponse(html_template.render(context, request))
 

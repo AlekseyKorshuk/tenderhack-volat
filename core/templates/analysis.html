@@ -9,127 +9,13 @@
 
 {% block content %}
     <div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-12 mb-lg-0 mb-4">
-          <div class="card">
-            <div class="card-body p-3">
-              <div class="row">
-                <div class="col-lg-12">
-                  <div class="d-flex flex-column h-100">
-<!--                    <p class="text-lg mb-1 pt-2 text-bold">Built by developers</p>-->
-                    <h4 class="font-weight-bolder">Нейронная сеть</h4>
-                    <p class="mb-3">Искусственный интеллект помогает Вам подобрать наиболее подходящие товары и приблизительные даты для закупок на основе вашей истории заказов.</p>
-                    <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="/how">
-                      Подробнее
-                      <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
-                    </a>
-                  </div>
-                </div>
-<!--                <div class="col-lg-3 ms-auto text-center mt-5 mt-lg-3">-->
-<!--                  <div class="border-radius-lg h-30">-->
-<!--                      <img class="top-0 d-lg-block d-none" alt="waves" height="60%" width="100%" src="https://i.pinimg.com/originals/04/8a/51/048a51831e45b04321af593612a04a16.gif" style="border-radius: 5%">-->
-<!--                  </div>-->
-<!--                </div>-->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-<!--    <div class="row mt-4">-->
-<!--&lt;!&ndash;        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">&ndash;&gt;-->
-<!--&lt;!&ndash;          <div class="card">&ndash;&gt;-->
-<!--&lt;!&ndash;            <div class="card-body p-3">&ndash;&gt;-->
-<!--&lt;!&ndash;              <div class="row">&ndash;&gt;-->
-<!--&lt;!&ndash;                <div class="col-7">&ndash;&gt;-->
-<!--&lt;!&ndash;                  <div class="numbers">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Потрачено</p>&ndash;&gt;-->
-<!--&lt;!&ndash;                    <h5 class="font-weight-bolder">{{spent_last_month}} ₽</h5>&ndash;&gt;-->
-<!--&lt;!&ndash;                    {% if spent_last_month >= 0 %}&ndash;&gt;-->
-<!--&lt;!&ndash;                      <span class="text-success text-sm font-weight-bolder">+ {{spent_last_month}} ₽</span>&ndash;&gt;-->
-<!--&lt;!&ndash;                    {% else %}&ndash;&gt;-->
-<!--&lt;!&ndash;                      <span class="text-warning text-sm font-weight-bolder">- {{spent_last_month|abs}} ₽</span>&ndash;&gt;-->
-<!--&lt;!&ndash;                    {% endif %}&ndash;&gt;-->
-<!--&lt;!&ndash;                    <span class="text-sm"></span>&ndash;&gt;-->
-<!--&lt;!&ndash;                  </div>&ndash;&gt;-->
-<!--&lt;!&ndash;                </div>&ndash;&gt;-->
-<!--&lt;!&ndash;                <div class="col-5 text-end my-auto">&ndash;&gt;-->
-<!--&lt;!&ndash;                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <i class="ni ni-money-coins text-lg opacity-10" aria-hidden="true"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                  </div>&ndash;&gt;-->
-<!--&lt;!&ndash;                </div>&ndash;&gt;-->
-<!--&lt;!&ndash;              </div>&ndash;&gt;-->
-<!--&lt;!&ndash;            </div>&ndash;&gt;-->
-<!--&lt;!&ndash;          </div>&ndash;&gt;-->
-<!--&lt;!&ndash;        </div>&ndash;&gt;-->
-<!--        <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">-->
-<!--          <div class="card">-->
-<!--            <div class="card-body p-3">-->
-<!--              <div class="row">-->
-<!--                <div class="col-7">-->
-<!--                  <div class="numbers">-->
-<!--                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Дата закупки<br> </p>-->
-<!--                    <h5 class="font-weight-bolder"> {{date}} </h5>-->
-<!--                    Через <span class="text-success text-sm font-weight-bolder">{{difference_days}} дней</span>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--                <div class="col-5 text-end my-auto">-->
-<!--                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">-->
-<!--                    <i class="ni ni-watch-time text-lg opacity-10" aria-hidden="true"></i>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4" style="cursor: pointer;">-->
-<!--          <div class="card">-->
-<!--            <div class="card-body p-3">-->
-<!--              <div class="row">-->
-<!--                <div class="col-7">-->
-<!--                  <div class="numbers">-->
-<!--                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Ожидаемый расход</p>-->
-<!--                    <h5 class="font-weight-bolder">{{total_sum}} ₽</h5>-->
-<!--                    Из начальных цен-->
-<!--                    <span class="text-sm"></span>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--                <div class="col-5 text-end my-auto">-->
-<!--                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">-->
-<!--                    <i class="ni ni-credit-card text-lg opacity-10" aria-hidden="true"></i>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="col-xl-4 col-sm-6" onclick="location.href='/tables/{{profile.company.id}}';" style="cursor: pointer;">-->
-<!--          <div class="card">-->
-<!--            <div class="card-body p-3">-->
-<!--              <div class="row">-->
-<!--                <div class="col-7">-->
-<!--                  <div class="numbers">-->
-<!--                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Закупок</p>-->
-<!--                    <h5 class="font-weight-bolder">{{total_purchases}}</h5>-->
-<!--                    <span class="text-success text-sm font-weight-bolder">+ {{purchases_last_month}}</span>-->
-<!--                    <span class="text-sm">за месяц</span>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--                <div class="col-5 text-end my-auto">-->
-<!--                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">-->
-<!--                    <i class="ni ni-cart text-lg opacity-10" aria-hidden="true"></i>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
     <div class="row mt-4">
+        {% if products_suggest|length > 0 %}
         <div class="col-lg-6 col-sm-6">
           <div class="card">
             <div class="card-header p-3 pb-0">
               <h6 class="mb-0">Возможно интересно</h6>
-              <p class="text-sm mb-0 text-capitalize font-weight-bold">Похожие товары</p>
+<!--              <p class="text-sm mb-0 text-capitalize font-weight-bold">Похожие товары</p>-->
             </div>
             <div class="card-body border-radius-lg p-3">
                 {% for item in products_suggest %}
@@ -153,7 +39,12 @@
             </div>
           </div>
         </div>
+        {% endif %}
+        {% if products_suggest|length > 0 %}
         <div class="col-lg-6 col-md-12 mt-4 mt-lg-0">
+            {% else %}
+            <div class="col-lg-12 col-md-12 mt-4 mt-lg-0">
+            {% endif %}
           <div class="card h-100">
             <div class="card-header pb-0 p-3">
               <div class="d-flex align-items-center">
@@ -225,10 +116,10 @@
                 <table class="table align-items-center mb-0">
                   <thead>
                     <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-8">Товар</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-9">Мин. цена</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Макс. цена</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Дата</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-10">Товар</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-6">Цена, от</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Периодичность, дней</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Приблизительная дата</th>
 <!--                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Уверенность</th>-->
                     </tr>
                   </thead>
@@ -242,7 +133,7 @@
                                 <img src="{{item.image}}" class="avatar avatar-sm me-3" style="width: auto !important">
                               </div>
                               <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-sm" style="width: 200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{item.name}} </h6>
+                                <h6 class="mb-0 text-sm" style="width: 300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{item.name}} </h6>
                               </div>
                             </div>
                           </a>
@@ -251,11 +142,14 @@
                         <span class="text-xs font-weight-bold"> {{item.minPrice}} ₽</span>
                       </td>
                       <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> {{item.maxPrice}} ₽ </span>
+                        <span class="text-xs font-weight-bold"> {{item.period}} </span>
                       </td>
                       <td class="align-middle text-center text-sm">
                         <span class="text-xs font-weight-bold"> {{item.date}} </span>
                       </td>
+<!--                      <td class="align-middle text-center text-sm">-->
+<!--                        <span class="text-xs font-weight-bold"> {{item.date}} </span>-->
+<!--                      </td>-->
 <!--                      <td class="align-middle">-->
 <!--                        <div class="progress-wrapper">-->
 <!--                          <div class="progress-info">-->

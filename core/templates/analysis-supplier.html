@@ -1,0 +1,417 @@
+{% extends 'layouts/base.html' %}
+
+{% load mathfilters %}
+
+{% block title %} Dashboard {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+    <div class="container-fluid">
+    <div class="row my-4">
+        <div class="col-lg-12 col-md-12 mt-4 mt-lg-0">
+          <div class="card h-100">
+            <div class="card-header pb-0 p-3">
+              <div class="d-flex align-items-center">
+                <h6 class="mb-0">Категории</h6>
+                <button type="button" class="btn btn-icon-only btn-rounded btn-outline-secondary mb-0 ms-2 btn-sm d-flex align-items-center justify-content-center ms-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="" data-bs-original-title="Статистика популярности закупок по категориям на основе Ваших данных">
+                  <i class="fas fa-info" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body p-3">
+              <div class="row">
+                <div class="col-lg-5 col-12 text-center">
+                  <div class="chart mt-4">
+                    <canvas id="chart-doughnut" class="chart-canvas" height="250" width="218" style="display: block; box-sizing: border-box; height: 200px; width: 174.7px;"></canvas>
+                  </div>
+                </div>
+                <div class="col-lg-7 col-12">
+                  <div class="table-responsive">
+                    <table class="table align-items-center mb-0">
+                      <tbody>
+                      {% for item in categories_stats.list %}
+                        <tr>
+                          <td>
+                            <div class="d-flex px-2 py-1">
+<!--                                <span class="d-flex flex-column justify-content-center" style="  height: 3%;  width: 3%;  background-color: #bbb;  border-radius: 50%;   display:table-cell; vertical-align:middle;"></span>-->
+                              <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm" style="width: 235px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis"> {{item.title}}</h6>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="align-middle text-center text-sm">
+                            <span class="text-xs font-weight-bold"> {{item.value}}% </span>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+<!--    <div class="row my-4">-->
+<!--        <div class="col-lg-12 col-md-12 mt-4 mt-lg-0">-->
+<!--              <div class="card ">-->
+<!--                <div class="card-header pb-0 p-3">-->
+<!--                  <div class="d-flex justify-content-between">-->
+<!--                    <h6 class="mb-2">Sales by Country</h6>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--                <div class="table-responsive">-->
+<!--                  <table class="table align-items-center ">-->
+<!--                    <tbody>-->
+<!--                      <tr>-->
+<!--                        <td class="w-30">-->
+<!--                          <div class="d-flex px-2 py-1 align-items-center">-->
+<!--                            <div>-->
+<!--                              <img src="https://appsrv1-147a1.kxcdn.com/soft-ui-dashboard-pro/img/icons/flags/US.png" alt="Country flag">-->
+<!--                            </div>-->
+<!--                            <div class="ms-4">-->
+<!--                              <p class="text-xs font-weight-bold mb-0">Country:</p>-->
+<!--                              <h6 class="text-sm mb-0">United States</h6>-->
+<!--                            </div>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                          <div class="text-center">-->
+<!--                            <p class="text-xs font-weight-bold mb-0">Sales:</p>-->
+<!--                            <h6 class="text-sm mb-0">2500</h6>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                          <div class="text-center">-->
+<!--                            <p class="text-xs font-weight-bold mb-0">Value:</p>-->
+<!--                            <h6 class="text-sm mb-0">$230,900</h6>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                        <td class="align-middle text-sm">-->
+<!--                          <div class="col text-center">-->
+<!--                            <p class="text-xs font-weight-bold mb-0">Bounce:</p>-->
+<!--                            <h6 class="text-sm mb-0">29.9%</h6>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                      </tr>-->
+<!--                      <tr>-->
+<!--                        <td class="w-30">-->
+<!--                          <div class="d-flex px-2 py-1 align-items-center">-->
+<!--                            <div>-->
+<!--                              <img src="https://appsrv1-147a1.kxcdn.com/soft-ui-dashboard-pro/img/icons/flags/DE.png" alt="Country flag">-->
+<!--                            </div>-->
+<!--                            <div class="ms-4">-->
+<!--                              <p class="text-xs font-weight-bold mb-0">Country:</p>-->
+<!--                              <h6 class="text-sm mb-0">Germany</h6>-->
+<!--                            </div>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                          <div class="text-center">-->
+<!--                            <p class="text-xs font-weight-bold mb-0">Sales:</p>-->
+<!--                            <h6 class="text-sm mb-0">3.900</h6>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                          <div class="text-center">-->
+<!--                            <p class="text-xs font-weight-bold mb-0">Value:</p>-->
+<!--                            <h6 class="text-sm mb-0">$440,000</h6>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                        <td class="align-middle text-sm">-->
+<!--                          <div class="col text-center">-->
+<!--                            <p class="text-xs font-weight-bold mb-0">Bounce:</p>-->
+<!--                            <h6 class="text-sm mb-0">40.22%</h6>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                      </tr>-->
+<!--                      <tr>-->
+<!--                        <td class="w-30">-->
+<!--                          <div class="d-flex px-2 py-1 align-items-center">-->
+<!--                            <div>-->
+<!--                              <img src="https://appsrv1-147a1.kxcdn.com/soft-ui-dashboard-pro/img/icons/flags/GB.png" alt="Country flag">-->
+<!--                            </div>-->
+<!--                            <div class="ms-4">-->
+<!--                              <p class="text-xs font-weight-bold mb-0">Country:</p>-->
+<!--                              <h6 class="text-sm mb-0">Great Britain</h6>-->
+<!--                            </div>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                          <div class="text-center">-->
+<!--                            <p class="text-xs font-weight-bold mb-0">Sales:</p>-->
+<!--                            <h6 class="text-sm mb-0">1.400</h6>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                          <div class="text-center">-->
+<!--                            <p class="text-xs font-weight-bold mb-0">Value:</p>-->
+<!--                            <h6 class="text-sm mb-0">$190,700</h6>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                        <td class="align-middle text-sm">-->
+<!--                          <div class="col text-center">-->
+<!--                            <p class="text-xs font-weight-bold mb-0">Bounce:</p>-->
+<!--                            <h6 class="text-sm mb-0">23.44%</h6>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                      </tr>-->
+<!--                      <tr>-->
+<!--                        <td class="w-30">-->
+<!--                          <div class="d-flex px-2 py-1 align-items-center">-->
+<!--                            <div>-->
+<!--                              <img src="https://appsrv1-147a1.kxcdn.com/soft-ui-dashboard-pro/img/icons/flags/BR.png" alt="Country flag">-->
+<!--                            </div>-->
+<!--                            <div class="ms-4">-->
+<!--                              <p class="text-xs font-weight-bold mb-0">Country:</p>-->
+<!--                              <h6 class="text-sm mb-0">Brasil</h6>-->
+<!--                            </div>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                          <div class="text-center">-->
+<!--                            <p class="text-xs font-weight-bold mb-0">Sales:</p>-->
+<!--                            <h6 class="text-sm mb-0">562</h6>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                          <div class="text-center">-->
+<!--                            <p class="text-xs font-weight-bold mb-0">Value:</p>-->
+<!--                            <h6 class="text-sm mb-0">$143,960</h6>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                        <td class="align-middle text-sm">-->
+<!--                          <div class="col text-center">-->
+<!--                            <p class="text-xs font-weight-bold mb-0">Bounce:</p>-->
+<!--                            <h6 class="text-sm mb-0">32.14%</h6>-->
+<!--                          </div>-->
+<!--                        </td>-->
+<!--                      </tr>-->
+<!--                    </tbody>-->
+<!--                  </table>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--    </div>-->
+
+    <div class="row my-4">
+        <div class="col-lg-12 col-md-12">
+          <div class="card">
+            <div class="card-header pb-0 p-3">
+              <h6 class="mb-0">Traffic channels</h6>
+              <div class="d-flex align-items-center">
+                <span class="badge badge-md badge-dot me-4">
+                  <i class="bg-primary"></i>
+                  <span class="text-dark text-xs">Organic search</span>
+                </span>
+                <span class="badge badge-md badge-dot me-4">
+                  <i class="bg-dark"></i>
+                  <span class="text-dark text-xs">Referral</span>
+                </span>
+                <span class="badge badge-md badge-dot me-4">
+                  <i class="bg-info"></i>
+                  <span class="text-dark text-xs">Social media</span>
+                </span>
+              </div>
+            </div>
+            <div class="card-body p-3">
+              <div class="chart">
+                <canvas id="chart-line" class="chart-canvas" height="375" style="display: block; box-sizing: border-box; height: 300px; width: 656.4px;" width="820"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    </div>
+      {% include "includes/footer.html" %}
+
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+
+  <script src="/static/assets/js/plugins/chartjs.min.js"></script>
+<!--  <script src="/static/assets/js/plugins/Chart.extension.js"></script>-->
+
+<script>
+
+    var ctx1 = document.getElementById("chart-line").getContext("2d");
+
+    var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+
+    gradientStroke1.addColorStop(1, 'rgba(203,12,159,0.2)');
+    gradientStroke1.addColorStop(0.2, 'rgba(72,72,176,0.0)');
+    gradientStroke1.addColorStop(0, 'rgba(203,12,159,0)'); //purple colors
+
+    var gradientStroke2 = ctx1.createLinearGradient(0, 230, 0, 50);
+
+    gradientStroke2.addColorStop(1, 'rgba(20,23,39,0.2)');
+    gradientStroke2.addColorStop(0.2, 'rgba(72,72,176,0.0)');
+    gradientStroke2.addColorStop(0, 'rgba(20,23,39,0)'); //purple colors
+
+    // Line chart
+    new Chart(ctx1, {
+      type: "line",
+      data: {
+        labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        datasets: [{
+            label: "Organic Search",
+            tension: 0.4,
+            borderWidth: 0,
+            pointRadius: 2,
+            pointBackgroundColor: "#cb0c9f",
+            borderColor: "#cb0c9f",
+            borderWidth: 3,
+            backgroundColor: gradientStroke1,
+            data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
+            maxBarThickness: 6
+          },
+          {
+            label: "Referral",
+            tension: 0.4,
+            borderWidth: 0,
+            pointRadius: 2,
+            pointBackgroundColor: "#3A416F",
+            borderColor: "#3A416F",
+            borderWidth: 3,
+            backgroundColor: gradientStroke2,
+            data: [30, 90, 40, 140, 290, 290, 340, 230, 400],
+            maxBarThickness: 6
+          },
+          {
+            label: "Direct",
+            tension: 0.4,
+            borderWidth: 0,
+            pointRadius: 2,
+            pointBackgroundColor: "#17c1e8",
+            borderColor: "#17c1e8",
+            borderWidth: 3,
+            backgroundColor: gradientStroke2,
+            data: [40, 80, 70, 90, 30, 90, 140, 130, 200],
+            maxBarThickness: 6
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          }
+        },
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        scales: {
+          y: {
+            grid: {
+              drawBorder: false,
+              display: true,
+              drawOnChartArea: true,
+              drawTicks: false,
+              borderDash: [5, 5]
+            },
+            ticks: {
+              display: true,
+              padding: 10,
+              color: '#9ca2b7'
+            }
+          },
+          x: {
+            grid: {
+              drawBorder: false,
+              display: true,
+              drawOnChartArea: true,
+              drawTicks: true,
+              borderDash: [5, 5]
+            },
+            ticks: {
+              display: true,
+              color: '#9ca2b7',
+              padding: 10
+            }
+          },
+        },
+      },
+    });
+
+
+
+  </script>
+  <script>
+      var ctx2 = document.getElementById("chart-doughnut").getContext("2d");
+
+      // Doughnut chart
+      new Chart(ctx2, {
+        type: "doughnut",
+        data: {
+          labels: {{ categories_stats.titles|safe }},
+          datasets: [{
+            label: "Категории",
+            weight: 9,
+            cutout: 60,
+            tension: 0.9,
+            pointRadius: 2,
+            borderWidth: 2,
+            backgroundColor: ['#2152ff', '#3A416F', '#f53939', '#a8b8d8', '#466d1d','#cb0c9f'],
+            data: {{ categories_stats.values }},
+            fill: false
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false,
+            }
+          },
+          interaction: {
+            intersect: false,
+            mode: 'index',
+          },
+          scales: {
+            y: {
+              grid: {
+                drawBorder: false,
+                display: false,
+                drawOnChartArea: false,
+                drawTicks: false,
+              },
+              ticks: {
+                display: false
+              }
+            },
+            x: {
+              grid: {
+                drawBorder: false,
+                display: false,
+                drawOnChartArea: false,
+                drawTicks: false,
+              },
+              ticks: {
+                display: false,
+              }
+            },
+          },
+        },
+      });
+    </script>
+
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+
+{% endblock javascripts %}

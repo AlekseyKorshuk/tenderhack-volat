@@ -24,3 +24,4 @@ urllib3==1.26.6
 whitenoise==5.3.0
 django-heroku
 openpyxl
+numpy==1.19.2
