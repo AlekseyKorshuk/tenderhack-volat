@@ -19,21 +19,23 @@
             </div>
             <div class="card-body border-radius-lg p-3">
                 {% for item in products_suggest %}
-                <div class="d-flex {% if forloop.counter > 1 %} mt-4 {% endif %}">
-                    <div>
-                      <div class="icon icon-shape bg-info-soft shadow text-center border-radius-md shadow-none">
-    <!--                    <i class="ni ni-money-coins text-lg text-info text-gradient opacity-10" aria-hidden="true"></i>-->
-                          <img src="{{item.image}}" class="avatar avatar-sm me-4" style="width: auto !important">
+                <a href="https://zakupki.mos.ru/sku/view/{{item.id}}">
+                    <div class="d-flex {% if forloop.counter > 1 %} mt-4 {% endif %}">
+                        <div>
+                          <div class="icon icon-shape bg-info-soft shadow text-center border-radius-md shadow-none">
+        <!--                    <i class="ni ni-money-coins text-lg text-info text-gradient opacity-10" aria-hidden="true"></i>-->
+                              <img src="{{item.image}}" class="avatar avatar-sm me-4" style="width: auto !important">
 
-                      </div>
+                          </div>
+                        </div>
+                        <div class="ms-3">
+                          <div class="numbers">
+                            <h6 class="mb-1 text-dark text-sm">{{item.name}}</h6>
+                            <span class="text-sm">{{item.category}}</span>
+                          </div>
+                        </div>
                     </div>
-                    <div class="ms-3">
-                      <div class="numbers">
-                        <h6 class="mb-1 text-dark text-sm">{{item.name}}</h6>
-                        <span class="text-sm">{{item.category}}</span>
-                      </div>
-                    </div>
-                </div>
+                </a>
                 {% endfor %}
 
             </div>
