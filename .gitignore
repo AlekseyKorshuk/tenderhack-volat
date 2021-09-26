@@ -34,3 +34,4 @@ core/static/assets/.temp
 !/core/static/assets/img/logos/instagram.png
 !/core/static/assets/img/logos/github.png
 !/core/static/assets/img/logos/twitter.png
+/staticfiles/

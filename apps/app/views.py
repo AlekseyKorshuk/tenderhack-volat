@@ -29,7 +29,8 @@ def inn(request, *args, **kwargs):
     inn = str(kwargs.get('inn'))
     user_id = None
     response = requests.get(
-        'https://zakupki.mos.ru/newapi/api/company/Query?filter={"filter":{"inn":{"value":"' + str(inn) + '"},"kpp":{"value":""},"name":{"value":"","contains":true},"regionRegisterTreePathId":{},"okopfId":{},"productionTreePathId":{},"productionDirectoryTreePathId":{},"offerRegionTreePathId":{},"type":{},"registrationDate":{},"enabledFederalLawIds":{}},"order":[{"field":"RegistrationDate","desc":true}],"withCount":true,"take":10,"skip":0}'
+        'https://zakupki.mos.ru/newapi/api/company/Query?filter={"filter":{"inn":{"value":"' + str(
+            inn) + '"},"kpp":{"value":""},"name":{"value":"","contains":true},"regionRegisterTreePathId":{},"okopfId":{},"productionTreePathId":{},"productionDirectoryTreePathId":{},"offerRegionTreePathId":{},"type":{},"registrationDate":{},"enabledFederalLawIds":{}},"order":[{"field":"RegistrationDate","desc":true}],"withCount":true,"take":10,"skip":0}'
     ).json()
 
     user_id = response['items'][0]['id']
@@ -41,7 +42,7 @@ def team(request, *args, **kwargs):
     if user_id is None:
         user_id = random.choice(get_profiles_list())
     html_template = loader.get_template('team.html')
-    
+
     context = {
         'segment': 'team',
         'profile': {
@@ -71,7 +72,6 @@ def how(request, *args, **kwargs):
 
 
 def profile(request, *args, **kwargs):
-
     user_id = kwargs.get('user_id')
     if user_id is None:
         user_id = random.choice(get_profiles_list())
@@ -81,7 +81,6 @@ def profile(request, *args, **kwargs):
 
     if not is_supplier:
         purchases_list = predictPurchases(inn)
-
 
         months, purchase_stats, total_spent, active = get_purchase_stats(profile)
 
@@ -155,7 +154,6 @@ def profile(request, *args, **kwargs):
                 profile['items'][i][
                     'auctionCurrentPrice'] = f"{int(profile['items'][i]['auctionCurrentPrice']):,}".replace(',', ' ')
 
-
         # f"{value:,}".replace(',', ' ')
         context = {
             'segment': 'index',
@@ -224,7 +222,6 @@ def profile(request, *args, **kwargs):
                 achievement['iconName']
             ]['items'].append(achievement['displayName'])
             if achievement['unlocked']:
-
                 achievements[
                     achievement['iconName']
                 ]['unlocked'] = True
@@ -234,7 +231,6 @@ def profile(request, *args, **kwargs):
 
         for i in range(len(profile['items'])):
             profile['items'][i]['rubSum'] = f"{int(profile['items'][i]['rubSum']):,}".replace(',', ' ')
-
 
         context = {
             'segment': 'index',
@@ -265,7 +261,6 @@ def profile(request, *args, **kwargs):
 
 
 def tables(request, *args, **kwargs):
-
     page = request.GET.get('page', 1)
     user_id = kwargs.get('user_id')
     if user_id is None:
@@ -364,11 +359,11 @@ class PostJsonListView(View):
             auctions.data = {'count': len(items), 'data': items}
             auctions.save()
 
-        return JsonResponse({'count': len(items), 'data': list(items)}, safe=False, json_dumps_params={'ensure_ascii': False})
+        return JsonResponse({'count': len(items), 'data': list(items)}, safe=False,
+                            json_dumps_params={'ensure_ascii': False})
 
 
 def analysis(request, *args, **kwargs):
-
     user_id = kwargs.get('user_id')
     if user_id is None:
         user_id = random.choice(get_profiles_list())
@@ -382,7 +377,7 @@ def analysis(request, *args, **kwargs):
         context = {
             'segment': 'analysis',
             'profile': profile,
-            'products_suggest': predictSuggestions(inn), #predictSuggestions(inn)
+            'products_suggest': predictSuggestions(inn),  # predictSuggestions(inn)
             'purchases_list': notifications_dict,
         }
 

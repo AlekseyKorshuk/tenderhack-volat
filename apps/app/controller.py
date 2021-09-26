@@ -10,6 +10,10 @@ from ml.controller import *
 auctions = None
 products = None
 
+print("Parsing data.json")
+json_file = open("datasets/data.json", encoding='utf-8')
+dataset = json.load(json_file)
+print("Parsing done")
 print("Parsing auctions.xlsx")
 auctions = pd.read_excel("datasets/auctions.xlsx", sheet_name="Запрос1", converters={'ИНН заказчика': str, 'ИНН поставщика': str})
 print("Parsing done")
@@ -21,8 +25,7 @@ print("Preloading")
 Preloaded().load_everything(auctions, products)
 print("Preloading done")
 
-json_file = open("datasets/data.json")
-dataset = json.load(json_file)
+
 
 
 
@@ -287,13 +290,11 @@ def _predictPurchases(inn, df):
 
     today = datetime.date.today()
     product_dict_clear = {}
-    print(product_dict)
     for key in product_dict.keys():
         if product_dict[key][-1] is not None:
             product_dict_clear[key] = product_dict[key]
 
-    print(product_dict_clear)
-    product_dict = sorted(product_dict_clear.items(), key=lambda k: k[-1])
+    product_dict = sorted(product_dict_clear.items(), key=lambda k: k[1][-1])
     product_dict_clear = {}
     for item in product_dict:
         if item[1][-1] >= today:
@@ -327,7 +328,6 @@ def getNotifications(predictions, is_supplier):
     period = 7 if not is_supplier else 30
     now = datetime.datetime.now()
     for item in list(predictions):
-        print(item)
         try:
             date = datetime.datetime.strptime(str(item['date']), datetime_predict_format)
         except:
@@ -358,7 +358,7 @@ def predictTrand(inn):
     clean_data = auctions.drop(df1.isna().any(axis=1).index)
 
     # user_orders = clean_data
-    user_orders = clean_data.loc[clean_data['ИНН заказчика'] == inn]
+    user_orders = clean_data.loc[clean_data['ИНН поставщика'] == inn]
 
     id_buy_dates = {}
     for index, data in user_orders.loc[:, ['СТЕ', 'Дата публикации КС на ПП']].iterrows():
@@ -376,9 +376,9 @@ def predictTrand(inn):
             if item_category not in id_buy_dates.keys():
                 id_buy_dates[item_category] = []
             id_buy_dates[item_category].append((publication_date, item_quantity, item_id))
-
+    global dataset
+    # print(dataset)
     output = predict_categories_trend(dataset, list(id_buy_dates.keys()))
-
     result_list = []
     notifications_dict = []
     for i in range(len(output)):
@@ -390,7 +390,7 @@ def predictTrand(inn):
         )
         result_list.append(
             {
-                'label': f"{output[i]['name']} {output[i]['percentage']}",
+                'label': f"{output[i]['name']} {int(output[i]['percentage'])}%",
                 'tension': 0.4,
                 'pointRadius': 2,
                 'pointBackgroundColor': colors[i],

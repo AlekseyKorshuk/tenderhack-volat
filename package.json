@@ -2,16 +2,16 @@
     "name": "django-soft-ui-dashboard",
     "mastertemplate": "boilerplate-code-django-dashboard",
     "version": "1.0.2",
-    "description": "Tender Hack | VOLAT",
+    "description": "Template project - django Boilerplate Code",
     "repository": {
         "type": "git",
-        "url": "https://github.com/AlekseyKorshuk/tenderhack"
+        "url": "https://github.com/app-generator/django-soft-ui-dashboard"
     },
     "bugs": {
-        "url": "https://github.com/AlekseyKorshuk/tenderhack/issues",
-        "email": ""
+        "url": "https://github.com/app-generator/django-soft-ui-dashboard/issues",
+        "email": "support@appseed.us"
     },
-    "author": "Tender Hack | VOLAT",
+    "author": "AppSeed App Generator <support@appseed.us> (https://appseed.us)",
     "engines": {
         "node": ">=10.0.0"
     },

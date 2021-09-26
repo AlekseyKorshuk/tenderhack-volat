@@ -1,10 +1,12 @@
 import json
+
 import pandas as pd
+
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+
 import datetime
 import dateutil.relativedelta as relativedelta
-
 
 
 class IdToCategory:
@@ -37,6 +39,7 @@ class Preloaded:
     pd_user_features = None
     id_buy_share = None
     index_to_id = None
+    id_category_share = None
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
@@ -46,7 +49,7 @@ class Preloaded:
     def load_everything(self, pd_data, pd_cat_data):
         if (self.users_distance is not None and self.id_to_index is not None and
                 self.categories is not None and self.pd_user_features is not None and
-                self.id_buy_share is not None):
+                self.id_buy_share is not None and self.id_category_share is not None):
             return
 
         IdToCategory()._load_dict(pd_cat_data)
@@ -83,7 +86,7 @@ class Preloaded:
                 buy_share[item_id] = amount / total_amount
             self.id_buy_share[user_id] = buy_share
 
-        id_category_share = {}
+        self.id_category_share = {}
         for id_, buy_share in self.id_buy_share.items():
             category_share = {}
             for item_id, item_share in buy_share.items():
@@ -93,7 +96,7 @@ class Preloaded:
                 if item_category not in category_share.keys():
                     category_share[item_category] = 0
                 category_share[item_category] += item_share
-            id_category_share[id_] = category_share
+            self.id_category_share[id_] = category_share
 
         self.categories = []
         for buy_share in self.id_buy_share.values():
@@ -101,12 +104,12 @@ class Preloaded:
                 item_category = IdToCategory().convert(item_id, pd_cat_data)
                 if item_category not in self.categories:
                     self.categories.append(item_category)
-
+        # self.id_category_share[id_].keys()
         user_features = {}
         self.id_to_index = {}
         self.index_to_id = {}
         i = 0
-        for id_, category_share in id_category_share.items():
+        for id_, category_share in self.id_category_share.items():
             features = []
             for category in self.categories:
                 if category in category_share.keys():
@@ -260,68 +263,69 @@ def periods_info(user_inn, pd_data):
     return period_info
 
 
-import numpy as np
 import sklearn.linear_model as linearRegr
 
+
 def sorted_data(data):
-  data_copy = data
-  for key in data:
-    array = data[key]
-    data_copy[key] = sorted(array, key = lambda tup: datetime.datetime.strptime(tup[0], "%d.%m.%Y"))
-  return data_copy
+    data_copy = data
+    for key in data:
+        array = data[key]
+        data_copy[key] = sorted(array, key=lambda tup: datetime.datetime.strptime(tup[0], "%d.%m.%Y"))
+    return data_copy
+
 
 def predict_next(x_space, y_space):
-  regr = linearRegr.LinearRegression()
-  lin_model = regr.fit(np.array(x_space).reshape(-1, 1), y_space)
-  return lin_model.predict(np.array([len(x_space)]).reshape(-1, 1))
+    regr = linearRegr.LinearRegression()
+    lin_model = regr.fit(np.array(x_space).reshape(-1, 1), y_space)
+    return lin_model.predict(np.array([len(x_space)]).reshape(-1, 1))
+
 
 def maximum_tuple_in_dict(d):
-  to_be_sorted = []
-  for key in d:
-    if d[key][1] < 50:
-      to_be_sorted.append((key, d[key][1]))
-  to_be_sorted = sorted(to_be_sorted, key = lambda tup: tup[1], reverse = True)
-  output = []
-  for i in range(len(to_be_sorted) if len(to_be_sorted) < 5 else 5):
-    dic = {}
-    key = to_be_sorted[i][0]
-    dic["name"] = key
-    dic["data"] = d[key][0]
-    dic["percentage"] = d[key][1]
-    output.append(dic)
-  return output
+    to_be_sorted = []
+    for key in d:
+        if d[key][1] < 50:
+            to_be_sorted.append((key, d[key][1]))
+    to_be_sorted = sorted(to_be_sorted, key=lambda tup: tup[1], reverse=True)
+    output = []
+    for i in range(len(to_be_sorted) if len(to_be_sorted) < 5 else 5):
+        dic = {}
+        key = to_be_sorted[i][0]
+        dic["name"] = key
+        dic["data"] = d[key][0]
+        dic["percentage"] = d[key][1]
+        output.append(dic)
+    return output
+
 
 def predict_categories_trend(data, categories):
-  DAYS_IN_MONTH = 30
-  MONTHS_IN_PAST = 11
-  DAYS_IN_PAST = MONTHS_IN_PAST * DAYS_IN_MONTH
-  initial_date = datetime.datetime.now().date() - datetime.timedelta(DAYS_IN_PAST)
-  data = sorted_data(data)
+    DAYS_IN_MONTH = 30
+    MONTHS_IN_PAST = 11
+    DAYS_IN_PAST = MONTHS_IN_PAST * DAYS_IN_MONTH
+    initial_date = datetime.datetime.now().date() - datetime.timedelta(DAYS_IN_PAST)
+    data = sorted_data(data)
 
-  categories_to_spaces = {}
-  for key in data:
-    if not key in categories:
-      continue
-    x_space = []
-    y_space = []
-    for tuple in data[key]:
-      current = datetime.datetime.strptime(tuple[0], "%d.%m.%Y").date()
-      if (datetime.datetime.now().date() - current).days < DAYS_IN_PAST:
-        x_space.append((current - initial_date).days)
-        y_space.append(tuple[1])
-    if len(x_space) < 3:
-      continue
-    approx = np.polyfit(x_space, y_space, 4)
-    p = np.poly1d(approx)
-    # fig, ax = plt.subplots()
-    # ax.plot(x_space, p(x_space))
-    # ax.plot(x_space, y_space)
-    months = []
-    for i in range(11):
-      months.append(p(i*DAYS_IN_MONTH))
-    months.append(predict_next(x_space, p(x_space))[0])
-    percent = (months[len(months)-1]-months[len(months)-2])/(months[len(months)-2])*100
-    categories_to_spaces[key] = (months, percent)
-  return maximum_tuple_in_dict(categories_to_spaces)
-
-
+    categories_to_spaces = {}
+    for key in data:
+        if not key in categories:
+            continue
+        x_space = []
+        y_space = []
+        for tuple in data[key]:
+            current = datetime.datetime.strptime(tuple[0], "%d.%m.%Y").date()
+            if (datetime.datetime.now().date() - current).days < DAYS_IN_PAST:
+                x_space.append((current - initial_date).days)
+                y_space.append(tuple[1])
+        if len(x_space) < 3:
+            continue
+        approx = np.polyfit(x_space, y_space, 4)
+        p = np.poly1d(approx)
+        # fig, ax = plt.subplots()
+        # ax.plot(x_space, p(x_space))
+        # ax.plot(x_space, y_space)
+        months = []
+        for i in range(11):
+            months.append(p(i * DAYS_IN_MONTH))
+        months.append(predict_next(x_space, p(x_space))[0])
+        percent = (months[len(months) - 1] - months[len(months) - 2]) / (months[len(months) - 2]) * 100
+        categories_to_spaces[key] = (months, percent)
+    return maximum_tuple_in_dict(categories_to_spaces)
